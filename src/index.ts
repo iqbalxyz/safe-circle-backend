@@ -1,10 +1,10 @@
-import express, { type Request, type Response, type Application, type NextFunction } from 'express';
+import express, { type Request, type Response, type Application } from 'express';
 import 'dotenv/config';
 
 const app: Application = express();
 const port: number = process.env.PORT != null ? parseInt(process.env.PORT) : 3000;
 
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
+app.get('/', (req: Request, res: Response) => {
   res.send('Hello World!');
 });
 
