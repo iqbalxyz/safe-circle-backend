@@ -28,7 +28,7 @@ export default defineConfig([
       // parser: tseslint.parser is already included in tseslint.configs.recommended
     },
     rules: {
-      // Your specific overrides
+      '@typescript-eslint/no-explicit-any': 'error'
     }
   }
 ]);
