@@ -7,13 +7,15 @@
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
+    "module": "commonjs",
     "target": "es2016",
     "types": [],
-    "moduleResolution": "nodenext",
+    "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "*":["node_modules/*"]
+      "./": ["src"],
+      "../*": ["src/*"],
+      "*": ["node_modules/*"],
     },
     "typeRoots": [
       "./src/types",
@@ -48,7 +50,7 @@
     "strict": true,
     "noImplicitAny": true,
     "jsx": "react-jsx",
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
