@@ -17,7 +17,7 @@ type PatchUserRequest = Request<{ id: string }, Record<string, unknown>, UpdateU
  **/
 export const getUsersController = async (req: Request, res: Response): Promise<void> => {
   try {
-    const params = req.query as { id?: number; full_name?: string; is_active?: boolean };
+    const params = req.query as { id?: number; full_name?: string };
     const result = await getUsersService(params);
     if (!result || (Array.isArray(result) && result.length === 0)) {
       res.status(404).json({ success: false, error: 'No users found', data: [], count: 0 });

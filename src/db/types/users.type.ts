@@ -9,7 +9,6 @@ export interface UsersTable {
   email: string;
   password_hash: string;
   role: UserRole;
-  is_active: boolean;
   profile_img_url: string;
   created_at: Timestamp;
 }

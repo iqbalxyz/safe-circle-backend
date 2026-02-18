@@ -4,7 +4,7 @@ import { Users, UsersInsert, UsersUpdate } from '../types/users.type';
 
 export const UsersRepository = {
   getUsers: async (
-    params: Partial<{ id: number; fullName: string; isActive: boolean; email: string }>
+    params: Partial<{ id: number; fullName: string; email: string }>
   ): Promise<Users[]> => {
     let query = db.selectFrom('users').selectAll();
 
@@ -13,9 +13,6 @@ export const UsersRepository = {
     }
     if (params.fullName) {
       query = query.where('full_name', 'like', `%${params.fullName}%`);
-    }
-    if (params.isActive !== undefined) {
-      query = query.where('is_active', '=', params.isActive);
     }
     if (params.email) {
       query = query.where('email', '=', params.email);

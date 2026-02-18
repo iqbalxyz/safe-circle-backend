@@ -14,7 +14,6 @@ import bcrypt from 'bcrypt';
 type GetUsersParams = {
   id?: number;
   full_name?: string;
-  is_active?: boolean;
 };
 
 /**
@@ -22,7 +21,6 @@ type GetUsersParams = {
  * @param params - An object containing optional filters for retrieving users. The filters include:
  *   - id: Filter users by their unique identifier.
  *   - full_name: Filter users by their full name.
- *   - is_active: Filter users based on their active status (true for active, false for inactive).
  * @returns if successful, it will return an array of user objects that match the provided filters,
  * excluding the password hash for security reasons. If no filters are provided,
  * it will return all users in the system (excluding password hashes).
@@ -32,11 +30,9 @@ export const getUsersService = async (
 ): Promise<Omit<Users, 'password_hash'>[]> => {
   logger.info('getUsers: processing request', params);
 
-  const filterParams: Partial<{ id: number; fullName: string; isActive: boolean; email?: string }> =
-    {};
+  const filterParams: Partial<{ id: number; fullName: string; email?: string }> = {};
   if (params.id !== undefined) filterParams.id = params.id;
   if (params.full_name !== undefined) filterParams.fullName = params.full_name;
-  if (params.is_active !== undefined) filterParams.isActive = params.is_active;
 
   const result = await UsersRepository.getUsers(filterParams);
   return result.map(sanitizeUser);
@@ -67,7 +63,6 @@ export const createUserService = async (
     email: data.email,
     password_hash: passwordHash,
     role: 'resident',
-    is_active: true,
     profile_img_url: '',
     created_at: new Date()
   };
