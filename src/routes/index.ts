@@ -5,6 +5,6 @@ import usersRoute from './users.route';
 const app = Router();
 
 app.use('/api', healthCheckRoute);
-app.use('/api', usersRoute);
+app.use('/api/users', usersRoute);
 
 export default app;

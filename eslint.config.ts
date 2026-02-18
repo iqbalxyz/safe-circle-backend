@@ -4,18 +4,28 @@ import globals from 'globals';
 import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
-  // Global Ignores
   {
     ignores: ['**/build/**', '**/node_modules/**', '**/public/*']
   },
 
-  // Base JS Recommended
   js.configs.recommended,
 
-  // TypeScript Recommended (Spread the array)
   ...tseslint.configs.recommended,
 
-  // Custom Settings (Env, ParserOptions, Rules)
+  // ⬅️ ADD THIS BLOCK
+  {
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          varsIgnorePattern: '^_',
+          argsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_'
+        }
+      ]
+    }
+  },
+
   {
     files: ['**/*.ts', '**/*.mts', '**/*.tsx'],
     languageOptions: {
@@ -25,7 +35,6 @@ export default defineConfig([
         ...globals.node,
         ...globals.es2021
       }
-      // parser: tseslint.parser is already included in tseslint.configs.recommended
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'error'
