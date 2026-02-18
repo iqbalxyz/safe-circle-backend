@@ -7,6 +7,7 @@ import { VerificationsTable } from './types/verifications.type';
 import neighborhoodWatch from '../config/neighborhood-watch';
 
 export interface Database {
+  // Table names must match exactly what's in your database (usually snake_case)
   users: UsersTable;
   incidents: IncidentsTable;
   comments: CommentsTable;
@@ -23,10 +24,10 @@ export const db = new Kysely<Database>({
       timezone: neighborhoodWatch.timezone,
       port: neighborhoodWatch.port,
       connectionLimit: 20,
-      connectTimeout: 10000, // 10 seconds to establish connection
+      connectTimeout: 10000,
       waitForConnections: true,
-      queueLimit: 0, // unlimited queue
-      idleTimeout: 60000, // release idle connections after 60 seconds
+      queueLimit: 0,
+      idleTimeout: 60000,
       maxIdle: 10
     })
   })

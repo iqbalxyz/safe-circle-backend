@@ -3,21 +3,26 @@ import {
   createUserSchema,
   updateUserSchema,
   userIdParamSchema,
+  userLoginValidationSchema,
   userSchema
 } from '../schemas/users.schema';
 import {
   createUserController,
+  deleteUserController,
   getUsersController,
-  patchUserController
+  patchUserController,
+  userLoginController
 } from '../modules/controllers/users.controller';
 import { validate } from '../middleware/validate.middleware';
 
 const usersRoute = Router();
 
-usersRoute.get(`/`, validate(userSchema), getUsersController);
-usersRoute.post(`/register`, validate(createUserSchema), createUserController);
+usersRoute.get(`/users`, validate(userSchema), getUsersController);
+usersRoute.post(`/users`, validate(createUserSchema), createUserController);
+usersRoute.post('/users/login', validate(userLoginValidationSchema), userLoginController);
+usersRoute.delete('/users/:id', validate(userIdParamSchema, 'params'), deleteUserController);
 usersRoute.patch(
-  '/:id',
+  '/users/:id',
   validate(userIdParamSchema, 'params'),
   validate(updateUserSchema.partial(), 'body'),
   patchUserController

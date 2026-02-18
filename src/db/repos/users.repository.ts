@@ -1,3 +1,4 @@
+import { HttpErrors } from '../../utils/error.util';
 import { db } from '../database';
 import { Users, UsersInsert, UsersUpdate } from '../types/users.type';
 
@@ -23,17 +24,13 @@ export const UsersRepository = {
     return await query.execute();
   },
 
-  getUsersByEmails: async (emails: string[]): Promise<Users[]> => {
-    return await db.selectFrom('users').selectAll().where('email', 'in', emails).execute();
-  },
-
   createUser: async (data: UsersInsert): Promise<Users> => {
     const result = await db.insertInto('users').values(data).executeTakeFirstOrThrow();
 
     const insertedId = result.insertId;
 
     if (!insertedId) {
-      throw new Error('Failed to get inserted user id');
+      throw HttpErrors.internal('Failed to get inserted user id');
     }
 
     const user = await db
@@ -43,7 +40,7 @@ export const UsersRepository = {
       .executeTakeFirst();
 
     if (!user) {
-      throw new Error('Failed to fetch inserted user');
+      throw HttpErrors.internal('Failed to fetch inserted user');
     }
 
     return user;
@@ -53,7 +50,7 @@ export const UsersRepository = {
     const result = await db.updateTable('users').set(data).where('id', '=', id).executeTakeFirst();
 
     if (!result || Number(result.numUpdatedRows) === 0) {
-      throw new Error(`User with id ${id} not found`);
+      throw HttpErrors.notFound(`User with id ${id} not found`);
     }
 
     // fetch updated row separately
@@ -70,7 +67,7 @@ export const UsersRepository = {
     const result = await db.deleteFrom('users').where('id', '=', id).executeTakeFirst();
 
     if (!result || Number(result.numDeletedRows) === 0) {
-      throw new Error(`User with id ${id} not found`);
+      throw HttpErrors.notFound(`User with id ${id} not found`);
     }
   }
 };

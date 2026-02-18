@@ -14,3 +14,19 @@ export class HttpError extends Error {
     this.name = 'HttpError';
   }
 }
+
+// Error factory object
+export const HttpErrors = {
+  forbidden: (message: string) => new HttpError(message, HTTP_RESPONSE_STATUS_CODE.FORBIDDEN),
+
+  badRequest: (message: string) => new HttpError(message, HTTP_RESPONSE_STATUS_CODE.BAD_REQUEST),
+
+  unauthorized: (message: string) => new HttpError(message, HTTP_RESPONSE_STATUS_CODE.UNAUTHORIZED),
+
+  notFound: (message: string) => new HttpError(message, HTTP_RESPONSE_STATUS_CODE.NOT_FOUND),
+
+  conflict: (message: string) => new HttpError(message, HTTP_RESPONSE_STATUS_CODE.CONFLICT),
+
+  internal: (message: string) =>
+    new HttpError(message, HTTP_RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR)
+} as const;
