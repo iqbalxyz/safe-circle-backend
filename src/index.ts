@@ -1,4 +1,4 @@
-import './utils/bigint.utils';
+import './utils/bigint.util';
 import express, { type Application } from 'express';
 import 'dotenv/config';
 import appMiddleware from './middleware';
