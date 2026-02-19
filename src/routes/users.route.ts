@@ -3,7 +3,6 @@ import {
   createUserSchema,
   updateUserSchema,
   userIdParamSchema,
-  userLoginValidationSchema,
   userSchema
 } from '../schemas/users.schema';
 import {
@@ -14,6 +13,7 @@ import {
   userLoginController
 } from '../modules/controllers/users.controller';
 import { validate } from '../middleware/validate.middleware';
+import { userLoginValidationSchema } from '../schemas/auth.schema';
 
 const usersRoute = Router();
 

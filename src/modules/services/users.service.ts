@@ -1,10 +1,10 @@
 import { UsersRepository } from '../../db/repos/users.repository';
 import { Users, UsersInsert, UsersUpdate } from '../../db/types/users.type';
+import { UserLoginRequest } from '../../schemas/auth.schema';
 import {
   CreateUserBodyRequest,
   UpdateUserBodyRequest,
-  updateUserSchema,
-  UserLoginRequest
+  updateUserSchema
 } from '../../schemas/users.schema';
 import { HttpErrors } from '../../utils/error.util';
 import { sanitizeUser } from '../../utils/user-sanitizer.util';

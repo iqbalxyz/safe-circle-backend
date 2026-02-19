@@ -1,4 +1,3 @@
-// schemas/user.schema.ts
 import * as z from 'zod';
 
 // Your existing schemas
@@ -25,12 +24,7 @@ export const userIdParamSchema = z.object({
   id: z.string().regex(/^\d+$/, 'ID must be a number').transform(Number)
 });
 
-export const userLoginValidationSchema = z.object({
-  email: z.email(),
-  password: z.string().min(8, { message: 'Password must be at least 8 characters' })
-});
-
+export type User = z.infer<typeof userSchema>;
 export type CreateUserBodyRequest = z.infer<typeof createUserSchema>;
 export type UpdateUserBodyRequest = z.infer<typeof updateUserSchema>;
 export type UserIdParam = z.infer<typeof userIdParamSchema>;
-export type UserLoginRequest = z.infer<typeof userLoginValidationSchema>;
