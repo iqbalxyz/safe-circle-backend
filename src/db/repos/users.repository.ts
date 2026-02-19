@@ -1,6 +1,6 @@
 import { HttpErrors } from '../../utils/error.util';
 import { db } from '../database';
-import { Users, UsersInsert, UsersUpdate } from '../types/users.type';
+import { Users, UsersUpdate } from '../types/users.type';
 
 export const UsersRepository = {
   getUsers: async (
@@ -21,23 +21,11 @@ export const UsersRepository = {
     return await query.execute();
   },
 
-  createUser: async (data: UsersInsert): Promise<Users> => {
-    const result = await db.insertInto('users').values(data).executeTakeFirstOrThrow();
-
-    const insertedId = result.insertId;
-
-    if (!insertedId) {
-      throw HttpErrors.internal('Failed to get inserted user id');
-    }
-
-    const user = await db
-      .selectFrom('users')
-      .selectAll()
-      .where('id', '=', Number(insertedId))
-      .executeTakeFirst();
+  getSpecificUser: async (id: number): Promise<Users> => {
+    const user = await db.selectFrom('users').selectAll().where('id', '=', id).executeTakeFirst();
 
     if (!user) {
-      throw HttpErrors.internal('Failed to fetch inserted user');
+      throw HttpErrors.notFound(`User with id ${id} not found`);
     }
 
     return user;

@@ -5,13 +5,15 @@ import { IncidentsTable } from './types/incidents.type';
 import { CommentsTable } from './types/comments.type';
 import { VerificationsTable } from './types/verifications.type';
 import neighborhoodWatch from '../config/neighborhood-watch';
+import { UserAuthTable } from './types/user-auth.type';
 
 export interface Database {
-  // Table names must match exactly what's in your database (usually snake_case)
+  // Table names must match exactly what's in the database
   users: UsersTable;
   incidents: IncidentsTable;
   comments: CommentsTable;
   verifications: VerificationsTable;
+  user_auth: UserAuthTable;
 }
 
 export const db = new Kysely<Database>({

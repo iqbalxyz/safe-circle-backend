@@ -1,31 +1,38 @@
 import { Router } from 'express';
+import { updateUserSchema, userIdParamSchema, userSchema } from '../schemas/users.schema';
 import {
-  createUserSchema,
-  updateUserSchema,
-  userIdParamSchema,
-  userSchema
-} from '../schemas/users.schema';
-import {
-  createUserController,
   deleteUserController,
+  getSpecificUserController,
   getUsersController,
-  patchUserController,
-  userLoginController
+  patchUserController
 } from '../modules/controllers/users.controller';
 import { validate } from '../middleware/validate.middleware';
-import { userLoginValidationSchema } from '../schemas/auth.schema';
+import { authenticate } from '../middleware/auth.middleware';
 
 const usersRoute = Router();
 
-usersRoute.get(`/users`, validate(userSchema), getUsersController);
-usersRoute.post(`/users`, validate(createUserSchema), createUserController);
-usersRoute.post('/users/login', validate(userLoginValidationSchema), userLoginController);
-usersRoute.delete('/users/:id', validate(userIdParamSchema, 'params'), deleteUserController);
+usersRoute.get(`/`, validate(userSchema), authenticate, getUsersController);
+
+usersRoute.get(
+  `/:id`,
+  validate(userIdParamSchema, 'params'),
+  authenticate,
+  getSpecificUserController
+);
+
 usersRoute.patch(
-  '/users/:id',
+  '/:id',
   validate(userIdParamSchema, 'params'),
   validate(updateUserSchema.partial(), 'body'),
+  authenticate,
   patchUserController
+);
+
+usersRoute.delete(
+  '/:id',
+  validate(userIdParamSchema, 'params'),
+  authenticate,
+  deleteUserController
 );
 
 export default usersRoute;

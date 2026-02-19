@@ -1,7 +1,7 @@
 import express from 'express';
 import '../utils/winston.util';
 import cors from 'cors';
-import app from '../routes';
+import app from '../routes/index.route';
 
 const appMiddleware = express();
 
