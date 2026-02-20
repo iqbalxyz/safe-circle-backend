@@ -89,11 +89,9 @@ export const refreshAccessTokenController = async (req: Request, res: Response) 
  * @param res - The Express response object, used to send a success message back to the client if the logout is successful, or an error message if there is an issue during logout.
  * @returns A promise that resolves when the response is sent. The response includes a success message if the logout is successful, or an error message if there is an issue during logout.
  */
-// logout.controller.ts
 export const logoutAuthController = async (req: Request, res: Response) => {
   console.log('Cookies Object:', req.cookies);
 
-  // This must match the name used in Login exactly!
   const refreshToken = req.cookies?.refreshToken;
 
   if (!refreshToken) {
