@@ -9,9 +9,15 @@ const generateAccessToken = (payload: object) => {
 };
 
 const generateRefreshToken = (payload: object) => {
-  return jsonwebtoken.sign(payload, process.env.JWT_REFRESH_SECRET_KEY as string, {
-    expiresIn: parseInt(process.env.JWT_REFRESH_EXPIRES_IN || '604800')
+  const expiresInSeconds = parseInt(process.env.JWT_REFRESH_EXPIRES_IN || '604800', 10);
+  const token = jsonwebtoken.sign(payload, process.env.JWT_REFRESH_SECRET_KEY as string, {
+    expiresIn: expiresInSeconds
   });
+
+  return {
+    token,
+    expiresInSeconds
+  };
 };
 
 const verifyRefreshToken = (token: string) => {
@@ -39,10 +45,19 @@ const verifyAccessToken = (token: string) => {
   }
 };
 
+const getRefreshConfig = () => {
+  const seconds = parseInt(process.env.JWT_REFRESH_EXPIRES_IN || '604800', 10);
+  return {
+    seconds,
+    milliseconds: seconds * 1000
+  };
+};
+
 export {
   generateAccessToken,
   generateRefreshToken,
   verifyRefreshToken,
   parseJwt,
-  verifyAccessToken
+  verifyAccessToken,
+  getRefreshConfig
 };

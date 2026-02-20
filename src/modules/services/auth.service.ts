@@ -6,6 +6,7 @@ import { CreateUserBodyRequest } from '../../schemas/users.schema';
 import { HttpErrors } from '../../utils/error.util';
 import { sanitizeUser } from '../../utils/user-sanitizer.util';
 import { logger } from '../../utils/winston.util';
+import { generateAccessToken, generateRefreshToken } from '../../utils/jwt.util';
 import bcrypt from 'bcrypt';
 
 /**
@@ -54,7 +55,7 @@ export const loginUserService = async (
 ): Promise<{ user: Omit<Users, 'password_hash'>; accessToken: string; refreshToken: string }> => {
   logger.info('userLogin: processing login request', { email: data.email });
 
-  const users = await UsersRepository.getUsers({ email: data.email });
+  const users = await UserAuthRepository.getUserByEmail({ email: data.email });
   if (users.length === 0) {
     throw HttpErrors.unauthorized('Invalid email');
   }
@@ -65,13 +66,64 @@ export const loginUserService = async (
     throw HttpErrors.unauthorized('Invalid password');
   }
 
-  const { generateAccessToken, generateRefreshToken } = await import('../../utils/jwt.util');
   const accessToken = generateAccessToken({ userId: user.id, role: user.role });
-  const refreshToken = generateRefreshToken({ userId: user.id, role: user.role });
+
+  const { token: refreshToken, expiresInSeconds } = generateRefreshToken({
+    userId: user.id,
+    role: user.role
+  });
+
+  const expiresAt = new Date(Date.now() + expiresInSeconds * 1000);
+
+  await UserAuthRepository.createSession({
+    user_id: user.id,
+    refresh_token: refreshToken,
+    expires_at: expiresAt
+  });
 
   return {
     user: sanitizeUser(user),
     accessToken,
     refreshToken
   };
+};
+
+export const refreshAccessTokenService = async (
+  refreshToken: string
+): Promise<{ accessToken: string; newRefreshToken: string }> => {
+  const { verifyRefreshToken, generateAccessToken, generateRefreshToken } =
+    await import('../../utils/jwt.util');
+  const decoded = verifyRefreshToken(refreshToken) as { userId: number; role: string };
+
+  const session = await UserAuthRepository.getSessionByToken(refreshToken);
+
+  if (!session) {
+    throw HttpErrors.unauthorized('Invalid or revoked refresh token');
+  }
+
+  if (new Date(session.expires_at) < new Date()) {
+    await UserAuthRepository.deleteSession(session.id);
+    throw HttpErrors.unauthorized('Refresh token expired');
+  }
+
+  const accessToken = generateAccessToken({ userId: decoded.userId, role: decoded.role });
+  const { token: newRefreshToken, expiresInSeconds } = generateRefreshToken({
+    userId: decoded.userId,
+    role: decoded.role
+  });
+
+  await UserAuthRepository.deleteSession(session.id);
+
+  const expiresAt = new Date(Date.now() + expiresInSeconds * 1000);
+  await UserAuthRepository.createSession({
+    user_id: decoded.userId,
+    refresh_token: newRefreshToken,
+    expires_at: expiresAt
+  });
+
+  return { accessToken, newRefreshToken };
+};
+
+export const logoutUserService = async (refreshToken: string) => {
+  return await UserAuthRepository.revokeRefreshToken(refreshToken);
 };
