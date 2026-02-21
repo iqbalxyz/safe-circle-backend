@@ -90,7 +90,7 @@ export const loginUserService = async (
 
 export const refreshAccessTokenService = async (
   refreshToken: string
-): Promise<{ accessToken: string; newRefreshToken: string }> => {
+): Promise<{ newAccessToken: string; newRefreshToken: string }> => {
   const { verifyRefreshToken, generateAccessToken, generateRefreshToken } =
     await import('../../utils/jwt.util');
   const decoded = verifyRefreshToken(refreshToken) as { userId: number; role: string };
@@ -106,7 +106,7 @@ export const refreshAccessTokenService = async (
     throw HttpErrors.unauthorized('Refresh token expired');
   }
 
-  const accessToken = generateAccessToken({ userId: decoded.userId, role: decoded.role });
+  const newAccessToken = generateAccessToken({ userId: decoded.userId, role: decoded.role });
   const { token: newRefreshToken, expiresInSeconds } = generateRefreshToken({
     userId: decoded.userId,
     role: decoded.role
@@ -121,7 +121,7 @@ export const refreshAccessTokenService = async (
     expires_at: expiresAt
   });
 
-  return { accessToken, newRefreshToken };
+  return { newAccessToken, newRefreshToken };
 };
 
 export const logoutUserService = async (refreshToken: string) => {

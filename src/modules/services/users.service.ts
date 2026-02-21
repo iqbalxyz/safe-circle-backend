@@ -8,7 +8,7 @@ import bcrypt from 'bcrypt';
 
 type GetUsersParams = {
   id?: number;
-  full_name?: string;
+  fullName?: string;
 };
 
 /**
@@ -27,7 +27,7 @@ export const getUsersService = async (
 
   const filterParams: Partial<{ id: number; fullName: string; email?: string }> = {};
   if (params.id !== undefined) filterParams.id = params.id;
-  if (params.full_name !== undefined) filterParams.fullName = params.full_name;
+  if (params.fullName !== undefined) filterParams.fullName = params.fullName;
 
   const result = await UsersRepository.getUsers(filterParams);
   return result.map(sanitizeUser);

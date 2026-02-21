@@ -77,7 +77,10 @@ export const refreshAccessTokenController = async (req: Request, res: Response) 
       sameSite: 'strict'
     });
 
-    return res.json({ accessToken: tokens.accessToken, newRefreshToken: tokens.newRefreshToken });
+    return res.json({
+      newAccessToken: tokens.newAccessToken,
+      newRefreshToken: tokens.newRefreshToken
+    });
   } catch (error) {
     handleControllerError(res, error);
   }
@@ -102,5 +105,5 @@ export const logoutAuthController = async (req: Request, res: Response) => {
   }
 
   res.clearCookie('refreshToken');
-  return res.status(200).json({ message: 'Logged out' });
+  return res.status(200).json({ message: 'Successfully Logged out' });
 };
