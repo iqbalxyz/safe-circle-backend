@@ -6,6 +6,6 @@ export interface VerificationsTable {
   is_verified: boolean;
 }
 
-export type verifications = Selectable<VerificationsTable>;
-export type verificationsInsert = Insertable<VerificationsTable>;
-export type verificationsUpdate = Updateable<VerificationsTable>;
+export type Verifications = Selectable<VerificationsTable>;
+export type VerificationsInsert = Insertable<VerificationsTable>;
+export type VerificationsUpdate = Updateable<VerificationsTable>;

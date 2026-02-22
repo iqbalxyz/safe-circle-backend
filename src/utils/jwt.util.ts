@@ -1,16 +1,30 @@
 import 'dotenv/config';
 import jsonwebtoken from 'jsonwebtoken';
 import { HttpErrors } from './error.util';
+import { AccessTokenPayload } from '../interface/auth.interface';
 
-const generateAccessToken = (payload: object) => {
-  return jsonwebtoken.sign(payload, process.env.JWT_SECRET_KEY as string, {
-    expiresIn: parseInt(process.env.JWT_EXPIRES_IN || '3600')
+const generateAccessToken = (payload: AccessTokenPayload) => {
+  const secret = process.env.JWT_SECRET_KEY;
+
+  if (!secret) {
+    throw new Error('JWT_SECRET_KEY is missing');
+  }
+
+  return jsonwebtoken.sign(payload, secret, {
+    expiresIn: parseInt(process.env.JWT_EXPIRES_IN || '3600', 10)
   });
 };
 
-const generateRefreshToken = (payload: object) => {
+const generateRefreshToken = (payload: AccessTokenPayload) => {
+  const secret = process.env.JWT_REFRESH_SECRET_KEY;
+
+  if (!secret) {
+    throw new Error('JWT_REFRESH_SECRET_KEY is missing');
+  }
+
   const expiresInSeconds = parseInt(process.env.JWT_REFRESH_EXPIRES_IN || '604800', 10);
-  const token = jsonwebtoken.sign(payload, process.env.JWT_REFRESH_SECRET_KEY as string, {
+
+  const token = jsonwebtoken.sign(payload, secret, {
     expiresIn: expiresInSeconds
   });
 
@@ -37,11 +51,13 @@ const parseJwt = (token: string) => {
   }
 };
 
-const verifyAccessToken = (token: string) => {
+const verifyAccessToken = (token: string): AccessTokenPayload | null => {
   try {
-    return jsonwebtoken.verify(token, String(process.env.JWT_SECRET_KEY));
+    const decoded = jsonwebtoken.verify(token, process.env.JWT_SECRET_KEY!) as AccessTokenPayload;
+
+    return decoded;
   } catch (error) {
-    throw HttpErrors.unauthorized(`Verify Refresh Token Error: ${error}`);
+    throw HttpErrors.unauthorized(`Parse JWT Error: ${error}`);
   }
 };
 

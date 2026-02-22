@@ -6,17 +6,15 @@ import { CreateUserBodyRequest } from '../../schemas/users.schema';
 import { HttpErrors } from '../../utils/error.util';
 import { sanitizeUser } from '../../utils/user-sanitizer.util';
 import { logger } from '../../utils/winston.util';
-import { generateAccessToken, generateRefreshToken } from '../../utils/jwt.util';
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefreshToken
+} from '../../utils/jwt.util';
 import bcrypt from 'bcrypt';
 
-/**
- * Create User Service
- * @param data - An object containing the necessary information to create a new user. The required fields include:
- *   - fullName: The full name of the user.
- *   - email: The email address of the user, which must be unique.
- *   - password: The password for the user account, which will be securely hashed before storage.
- * @returns if the user is created successfully, it will return the created user information (excluding the password hash).
- */
+// ================= REGISTER =================
+
 export const registerUserService = async (
   data: CreateUserBodyRequest
 ): Promise<Omit<Users, 'password_hash'>> => {
@@ -43,35 +41,36 @@ export const registerUserService = async (
   return sanitizeUser(result);
 };
 
-/**
- * User Login Service
- * @param data - An object containing the necessary information for a user to log in. The required fields include:
- *   - email: The email address of the user attempting to log in.
- *   - password: The password provided by the user, which will be compared against the stored hashed password for authentication.
- * @returns if the login is successfull, it will return authenticated user information (excluding the password hash)
- */
+// ================= LOGIN =================
+
 export const loginUserService = async (
   data: UserLoginRequest
 ): Promise<{ user: Omit<Users, 'password_hash'>; accessToken: string; refreshToken: string }> => {
   logger.info('userLogin: processing login request', { email: data.email });
 
   const users = await UserAuthRepository.getUserByEmail({ email: data.email });
+
   if (users.length === 0) {
     throw HttpErrors.unauthorized('Invalid email');
   }
 
   const user = users[0]!;
+
   const isPasswordValid = await bcrypt.compare(data.password, user.password_hash);
+
   if (!isPasswordValid) {
     throw HttpErrors.unauthorized('Invalid password');
   }
 
-  const accessToken = generateAccessToken({ userId: user.id, role: user.role });
-
-  const { token: refreshToken, expiresInSeconds } = generateRefreshToken({
-    userId: user.id,
+  // 🔑 JWT PAYLOAD MUST MATCH req.user.id
+  const payload = {
+    id: user.id,
     role: user.role
-  });
+  };
+
+  const accessToken = generateAccessToken(payload);
+
+  const { token: refreshToken, expiresInSeconds } = generateRefreshToken(payload);
 
   const expiresAt = new Date(Date.now() + expiresInSeconds * 1000);
 
@@ -88,12 +87,15 @@ export const loginUserService = async (
   };
 };
 
+// ================= REFRESH TOKEN =================
+
 export const refreshAccessTokenService = async (
   refreshToken: string
 ): Promise<{ newAccessToken: string; newRefreshToken: string }> => {
-  const { verifyRefreshToken, generateAccessToken, generateRefreshToken } =
-    await import('../../utils/jwt.util');
-  const decoded = verifyRefreshToken(refreshToken) as { userId: number; role: string };
+  const decoded = verifyRefreshToken(refreshToken) as {
+    id: number;
+    role: string;
+  };
 
   const session = await UserAuthRepository.getSessionByToken(refreshToken);
 
@@ -106,23 +108,33 @@ export const refreshAccessTokenService = async (
     throw HttpErrors.unauthorized('Refresh token expired');
   }
 
-  const newAccessToken = generateAccessToken({ userId: decoded.userId, role: decoded.role });
-  const { token: newRefreshToken, expiresInSeconds } = generateRefreshToken({
-    userId: decoded.userId,
+  const payload = {
+    id: decoded.id,
     role: decoded.role
-  });
+  };
 
+  const newAccessToken = generateAccessToken(payload);
+
+  const { token: newRefreshToken, expiresInSeconds } = generateRefreshToken(payload);
+
+  // revoke old session
   await UserAuthRepository.deleteSession(session.id);
 
   const expiresAt = new Date(Date.now() + expiresInSeconds * 1000);
+
   await UserAuthRepository.createSession({
-    user_id: decoded.userId,
+    user_id: decoded.id,
     refresh_token: newRefreshToken,
     expires_at: expiresAt
   });
 
-  return { newAccessToken, newRefreshToken };
+  return {
+    newAccessToken,
+    newRefreshToken
+  };
 };
+
+// ================= LOGOUT =================
 
 export const logoutUserService = async (refreshToken: string) => {
   return await UserAuthRepository.revokeRefreshToken(refreshToken);
