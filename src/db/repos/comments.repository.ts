@@ -35,10 +35,10 @@ export const CommentsRepository = {
     }
   },
 
-  patchComment: async (id: number, content: string): Promise<CommentsUpdate> => {
+  patchComment: async (id: number, data: CommentsUpdate): Promise<CommentsUpdate> => {
     const result = await db
       .updateTable('comments')
-      .set({ content })
+      .set({ content: data.content, is_edited: data.is_edited })
       .where('id', '=', id)
       .executeTakeFirst();
 

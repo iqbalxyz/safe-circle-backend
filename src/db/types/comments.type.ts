@@ -7,6 +7,7 @@ export interface CommentsTable {
   incident_id: number;
   user_id: number;
   content: string;
+  is_edited: boolean;
   created_at: Timestamp;
 }
 
