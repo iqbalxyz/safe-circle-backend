@@ -9,10 +9,5 @@ export const refreshValidationSchema = z.object({
   refreshToken: z.string()
 });
 
-export const userLogoutValidationSchema = z.object({
-  refreshToken: z.string()
-});
-
 export type UserLoginRequest = z.infer<typeof userLoginValidationSchema>;
 export type RefreshTokenRequest = z.infer<typeof refreshValidationSchema>;
-export type UserLogoutRequest = z.infer<typeof userLogoutValidationSchema>;

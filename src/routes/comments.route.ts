@@ -7,24 +7,21 @@ import {
   getCommentsFromIncidentController,
   patchCommentController
 } from '../modules/controllers/comments.controller';
-import {
-  incidentCommentsSchema,
-  postCommentsBodySchema,
-  postCommentsParamsSchema
-} from '../schemas/comments.schema';
+import { incidentCommentsSchema, postCommentsBodySchema } from '../schemas/comments.schema';
+import { incidentDetailParamsSchema } from '../schemas/incidents.schema';
 
 const incidentCommentsRoute = Router();
 
 incidentCommentsRoute.get(
   '/:id/comments',
-  validate(incidentCommentsSchema, 'params'),
+  validate(incidentDetailParamsSchema, 'params'),
   authenticate,
   getCommentsFromIncidentController
 );
 
 incidentCommentsRoute.post(
   '/:id/comments',
-  validate(postCommentsParamsSchema, 'params'),
+  validate(incidentDetailParamsSchema, 'params'),
   validate(postCommentsBodySchema, 'body'),
   authenticate,
   addCommentToIncidentController
@@ -32,7 +29,7 @@ incidentCommentsRoute.post(
 
 incidentCommentsRoute.patch(
   '/:id/comments/:id',
-  validate(postCommentsParamsSchema, 'params'),
+  validate(incidentCommentsSchema, 'params'),
   validate(postCommentsBodySchema.partial(), 'body'),
   authenticate,
   patchCommentController

@@ -91,7 +91,7 @@ export const loginUserService = async (
 
 export const refreshAccessTokenService = async (
   refreshToken: string
-): Promise<{ newAccessToken: string; newRefreshToken: string }> => {
+): Promise<{ accessToken: string; refreshToken: string }> => {
   const decoded = verifyRefreshToken(refreshToken) as {
     id: number;
     role: string;
@@ -113,7 +113,7 @@ export const refreshAccessTokenService = async (
     role: decoded.role
   };
 
-  const newAccessToken = generateAccessToken(payload);
+  const accessToken = generateAccessToken(payload);
 
   const { token: newRefreshToken, expiresInSeconds } = generateRefreshToken(payload);
 
@@ -129,8 +129,8 @@ export const refreshAccessTokenService = async (
   });
 
   return {
-    newAccessToken,
-    newRefreshToken
+    accessToken,
+    refreshToken
   };
 };
 

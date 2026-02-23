@@ -1,8 +1,8 @@
 import { Insertable, Selectable, Updateable } from 'kysely/dist/cjs';
 
 export interface VerificationsTable {
-  user_id: number;
   incident_id: number;
+  user_id: number;
   is_verified: boolean;
 }
 

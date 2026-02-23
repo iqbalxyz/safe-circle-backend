@@ -43,7 +43,8 @@ export const loginAuthController = async (req: Request, res: Response) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: milliseconds
+      maxAge: milliseconds,
+      path: '/'
     });
 
     res.status(200).json({
@@ -71,15 +72,16 @@ export const refreshAccessTokenController = async (req: Request, res: Response) 
   try {
     const tokens = await refreshAccessTokenService(refreshToken);
 
-    res.cookie('refreshToken', tokens.newRefreshToken, {
+    res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict'
+      sameSite: 'strict',
+      path: '/'
     });
 
     return res.json({
-      newAccessToken: tokens.newAccessToken,
-      newRefreshToken: tokens.newRefreshToken
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken
     });
   } catch (error) {
     handleControllerError(res, error);
@@ -93,17 +95,24 @@ export const refreshAccessTokenController = async (req: Request, res: Response) 
  * @returns A promise that resolves when the response is sent. The response includes a success message if the logout is successful, or an error message if there is an issue during logout.
  */
 export const logoutAuthController = async (req: Request, res: Response) => {
-  console.log('Cookies Object:', req.cookies);
-
   const refreshToken = req.cookies?.refreshToken;
 
-  if (!refreshToken) {
-    logger.warn('Token not found in cookies');
-  } else {
+  if (refreshToken) {
     const result = await logoutUserService(refreshToken);
     console.log('Database Deletion Result:', result);
+  } else {
+    logger.warn('Token not found in cookies during logout');
   }
 
-  res.clearCookie('refreshToken');
-  return res.status(200).json({ message: 'Successfully Logged out' });
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path: '/'
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: 'Successfully Logged out'
+  });
 };

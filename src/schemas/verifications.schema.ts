@@ -5,7 +5,7 @@ export const verifyIncidentParamsSchema = z.object({
 });
 
 export const verifyIncidentBodySchema = z.object({
-  is_verified: z.boolean().default(true)
+  isVerified: z.boolean().default(false)
 });
 
 export type VerifyIncidentParams = z.infer<typeof verifyIncidentParamsSchema>;

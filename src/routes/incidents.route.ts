@@ -16,6 +16,7 @@ import {
   updateIncidentStatusParamsSchema,
   updateIncidentStatusQuerySchema
 } from '../schemas/incidents.schema';
+import { verifyIncidentController } from '../modules/controllers/verification.controller';
 
 const incidentsRoute = Router();
 
@@ -54,6 +55,13 @@ incidentsRoute.delete(
   validate(incidentDetailParamsSchema, 'params'),
   authenticate,
   deleteIncidentController
+);
+
+incidentsRoute.patch(
+  '/:id/verify',
+  validate(incidentDetailParamsSchema, 'params'),
+  authenticate,
+  verifyIncidentController
 );
 
 export default incidentsRoute;
