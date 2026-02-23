@@ -109,24 +109,17 @@ export const createIncidentService = async (
 
 export const updateIncidentStatusService = async (
   id: number,
-  updateData: UpdateIncidentStatusBodyRequest,
-  force?: boolean
+  updateData: UpdateIncidentStatusBodyRequest
 ): Promise<Incidents> => {
   logger.info('updateIncidentStatus: processing request', {
     incidentId: id,
-    ...updateData,
-    force
+    ...updateData
   });
 
   const existingIncident = await IncidentsRepository.getSpecificIncident(id);
 
   if (!existingIncident) {
     throw HttpErrors.notFound(`Incident with id ${id} not found`);
-  }
-
-  // Optional business logic example
-  if (!force && existingIncident.status === 'resolved') {
-    throw HttpErrors.conflict('Incident already resolved. Use force=true to override.');
   }
 
   return await IncidentsRepository.patchIncidentStatus(id, updateData.status);

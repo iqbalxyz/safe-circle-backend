@@ -13,24 +13,6 @@ import {
   UpdateIncidentStatusBodyRequest
 } from '../../schemas/incidents.schema';
 import { HttpErrors } from '../../utils/error.util';
-import { Status } from '../../db/types/incidents.type';
-
-export interface UpdateIncidentStatusParams {
-  id: string;
-}
-
-export interface UpdateIncidentStatusBody {
-  status?: Status; // Use your actual Status type
-}
-
-export interface UpdateIncidentStatusQuery {
-  force?: string;
-}
-
-export interface UpdateIncidentStatusData {
-  status?: Status;
-  force?: boolean;
-}
 
 export const getIncidentsController = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -106,8 +88,7 @@ export const updateIncidentStatusController = async (
   req: Request<
     { id: string }, // params
     unknown, // res body
-    UpdateIncidentStatusBodyRequest, // req body
-    { force?: string } // query
+    UpdateIncidentStatusBodyRequest
   >,
   res: Response,
   next: NextFunction
@@ -127,13 +108,9 @@ export const updateIncidentStatusController = async (
       throw HttpErrors.forbidden('User does not have permission to update incident status');
     }
 
-    const result = await updateIncidentStatusService(
-      incidentId,
-      {
-        status: req.body.status!
-      },
-      req.query.force === 'true'
-    );
+    const result = await updateIncidentStatusService(incidentId, {
+      status: req.body.status!
+    });
 
     res.status(200).json({
       success: true,

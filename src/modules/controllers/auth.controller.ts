@@ -6,7 +6,7 @@ import {
   refreshAccessTokenService,
   registerUserService
 } from '../services/auth.service';
-import { getRefreshConfig } from '../../utils/jwt.util';
+import { getRefreshTokenConfig } from '../../utils/jwt.util';
 import { logger } from '../../utils/winston.util';
 
 /**
@@ -37,7 +37,7 @@ export const registerAuthController = async (req: Request, res: Response): Promi
 export const loginAuthController = async (req: Request, res: Response) => {
   try {
     const { user, accessToken, refreshToken } = await loginUserService(req.body);
-    const { milliseconds } = getRefreshConfig();
+    const { milliseconds } = getRefreshTokenConfig();
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,

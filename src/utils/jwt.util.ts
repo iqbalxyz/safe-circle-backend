@@ -36,7 +36,9 @@ const generateRefreshToken = (payload: AccessTokenPayload) => {
 
 const verifyRefreshToken = (token: string) => {
   try {
-    return jsonwebtoken.verify(token, String(process.env.JWT_REFRESH_SECRET_KEY));
+    return jsonwebtoken.verify(token, String(process.env.JWT_REFRESH_SECRET_KEY), {
+      algorithms: ['HS256']
+    });
   } catch (error) {
     throw HttpErrors.unauthorized(`Verify Refresh Token Error: ${error}`);
   }
@@ -53,15 +55,17 @@ const parseJwt = (token: string) => {
 
 const verifyAccessToken = (token: string): AccessTokenPayload | null => {
   try {
-    const decoded = jsonwebtoken.verify(token, process.env.JWT_SECRET_KEY!) as AccessTokenPayload;
+    const decoded = jsonwebtoken.verify(token, process.env.JWT_SECRET_KEY!, {
+      algorithms: ['HS256']
+    }) as AccessTokenPayload;
 
     return decoded;
   } catch (error) {
-    throw HttpErrors.unauthorized(`Parse JWT Error: ${error}`);
+    throw HttpErrors.unauthorized(`Verify Access Token Error: ${error}`);
   }
 };
 
-const getRefreshConfig = () => {
+const getRefreshTokenConfig = () => {
   const seconds = parseInt(process.env.JWT_REFRESH_EXPIRES_IN || '604800', 10);
   return {
     seconds,
@@ -75,5 +79,5 @@ export {
   verifyRefreshToken,
   parseJwt,
   verifyAccessToken,
-  getRefreshConfig
+  getRefreshTokenConfig
 };
