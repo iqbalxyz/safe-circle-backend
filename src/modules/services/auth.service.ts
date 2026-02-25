@@ -1,6 +1,6 @@
 import { UserAuthRepository } from '../../db/repos/auth.repository';
 import { UsersRepository } from '../../db/repos/users.repository';
-import { Users, UsersInsert } from '../../db/types/users.type';
+import { Users, UsersInsert } from '../../db/entities/users.entity';
 import { UserLoginRequest } from '../../schemas/auth.schema';
 import { CreateUserBodyRequest } from '../../schemas/users.schema';
 import { HttpErrors } from '../../utils/error.util';

@@ -1,11 +1,11 @@
 import { Kysely, MysqlDialect } from 'kysely';
 import { createPool } from 'mysql2';
-import { UsersTable } from './types/users.type';
-import { IncidentsTable } from './types/incidents.type';
-import { CommentsTable } from './types/comments.type';
-import { VerificationsTable } from './types/verifications.type';
+import { UsersTable } from './entities/users.entity';
+import { IncidentsTable } from './entities/incidents.entity';
+import { CommentsTable } from './entities/comments.entity';
+import { VerificationsTable } from './entities/verifications.entity';
 import neighborhoodWatch from '../config/neighborhood-watch';
-import { UserAuthTable } from './types/user-auth.type';
+import { UserAuthTable } from './entities/user-auth.entity';
 
 export interface Database {
   // Table names must match exactly what's in the database

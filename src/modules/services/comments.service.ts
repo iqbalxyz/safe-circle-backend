@@ -1,5 +1,5 @@
 import { CommentsRepository } from '../../db/repos/comments.repository';
-import { Comments, CommentsInsert, CommentsUpdate } from '../../db/types/comments.type';
+import { Comments, CommentsInsert, CommentsUpdate } from '../../db/entities/comments.entity';
 import { PostCommentBodyRequest, UpdateCommentBodyRequest } from '../../schemas/comments.schema';
 import { format } from 'date-fns';
 

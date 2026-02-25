@@ -1,6 +1,6 @@
 import { HttpErrors } from '../../utils/error.util';
 import { db } from '../database';
-import { Comments, CommentsInsert, CommentsUpdate } from '../types/comments.type';
+import { Comments, CommentsInsert, CommentsUpdate } from '../entities/comments.entity';
 
 export const CommentsRepository = {
   getComments: async (incidentId: number): Promise<Comments[]> => {

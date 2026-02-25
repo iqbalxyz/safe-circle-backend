@@ -1,6 +1,6 @@
 import { db } from '../database';
 import { HttpErrors } from '../../utils/error.util';
-import { VerificationsUpdate } from '../types/verifications.type';
+import { VerificationsUpdate } from '../entities/verifications.entity';
 
 export const VerificationsRepository = {
   verifyIncident: async (

@@ -1,7 +1,7 @@
 import { HttpErrors } from '../../utils/error.util';
 import { logger } from '../../utils/winston.util';
 import { db } from '../database';
-import { Users, UsersInsert } from '../types/users.type';
+import { Users, UsersInsert } from '../entities/users.entity';
 import { format } from 'date-fns';
 
 export const UserAuthRepository = {

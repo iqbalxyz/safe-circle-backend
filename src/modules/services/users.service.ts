@@ -1,5 +1,5 @@
 import { UsersRepository } from '../../db/repos/users.repository';
-import { Users, UsersUpdate } from '../../db/types/users.type';
+import { Users, UsersUpdate } from '../../db/entities/users.entity';
 import { UpdateUserBodyRequest, updateUserSchema } from '../../schemas/users.schema';
 import { HttpErrors } from '../../utils/error.util';
 import { sanitizeUser } from '../../utils/user-sanitizer.util';
