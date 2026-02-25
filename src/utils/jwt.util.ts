@@ -1,7 +1,11 @@
 import 'dotenv/config';
 import jsonwebtoken from 'jsonwebtoken';
 import { HttpErrors } from './error.util';
-import { AccessTokenPayload } from '../interface/auth.interface';
+
+export interface AccessTokenPayload {
+  id: number;
+  role: string;
+}
 
 const generateAccessToken = (payload: AccessTokenPayload) => {
   const secret = process.env.JWT_SECRET_KEY;

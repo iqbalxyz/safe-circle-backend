@@ -1,6 +1,6 @@
 import { HttpErrors } from '../../utils/error.util';
 import { db } from '../database';
-import { Incident, Incidents, IncidentsInsert, Status } from '../types/incidents.type';
+import { Incident, Incidents, IncidentsInsert, Status } from '../entities/incidents.entity';
 
 const kmToDegrees = (km: number): number => {
   return km / 111;

@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { IncidentsRepository } from '../../db/repos/incidents.repository';
-import { Incidents } from '../../db/types/incidents.type';
-import { Status, Incident } from '../../db/types/incidents.type';
+import { Incidents } from '../../db/entities/incidents.entity';
+import { Status, Incident } from '../../db/entities/incidents.entity';
 import {
   IncidentListQueryParams,
   PostIncidentBodyRequest,

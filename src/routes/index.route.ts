@@ -7,7 +7,7 @@ import incidentCommentsRoute from './comments.route';
 
 const app = Router();
 
-app.use('/health-check', healthCheckRoute);
+app.use('/api/health-check', healthCheckRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/users', usersRoute);
 app.use('/api/incidents', incidentsRoute);

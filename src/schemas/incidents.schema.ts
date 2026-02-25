@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import { Status } from '../db/types/incidents.type';
+import { Status } from '../db/entities/incidents.entity';
 
 export const incidentQuerySchema = z.object({
   status: z.enum(['open', 'investigating', 'resolved', 'spam']).optional(),

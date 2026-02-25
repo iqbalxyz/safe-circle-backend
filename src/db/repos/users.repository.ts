@@ -1,6 +1,6 @@
 import { HttpErrors } from '../../utils/error.util';
 import { db } from '../database';
-import { Users, UsersUpdate } from '../types/users.type';
+import { Users, UsersUpdate } from '../entities/users.entity';
 
 export const UsersRepository = {
   getUsers: async (
