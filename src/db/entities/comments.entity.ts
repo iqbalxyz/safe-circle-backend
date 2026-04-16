@@ -1,4 +1,4 @@
-import { ColumnType, Generated, Insertable, Selectable, Updateable } from 'kysely/dist/cjs';
+import { ColumnType, Generated, Insertable, Selectable, Updateable } from 'kysely';
 
 export type Timestamp = ColumnType<Date, Date | string>;
 

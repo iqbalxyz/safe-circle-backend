@@ -1,4 +1,4 @@
-import { Insertable, Selectable, Updateable } from 'kysely/dist/cjs';
+import { Insertable, Selectable, Updateable } from 'kysely';
 
 export interface VerificationsTable {
   incident_id: number;

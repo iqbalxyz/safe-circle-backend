@@ -1,69 +1,44 @@
 {
-  // Visit https://aka.ms/tsconfig to read more about this file
   "ts-node": {
-  "files": true
-},
+    "files": true
+  },
   "compilerOptions": {
-    // File Layout
-    // "rootDir": "./src",
+    "rootDir": "./src",
     "outDir": "./build",
 
     // Environment Settings
-    // See also https://aka.ms/tsconfig/module
-    "module": "commonjs",
-    "target": "es2016",
-    "lib": [
-      "es2016",
-      "es2022.error", // Specifically enables 'cause' in the Error constructor
-      "dom"           // Include if you are in a browser or using certain web APIs
-    ],
-    "types": [],
-    "moduleResolution": "node",
-    "baseUrl": ".",
-    "paths": {
-      "./": ["src"],
-      "../*": ["src/*"],
-      "*": ["node_modules/*"],
-    },
-    "typeRoots": [
-      "./src/types",
-      "./node_modules/@types"
-    ],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    
+    // Module resolution
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    // For nodejs:
-    // "lib": ["esnext"],
-    // "types": ["node"],
-    // and npm install -D @types/node
-
-    // Other Outputs
+    
+    // Type definitions
+    "types": ["node", "express"],
+    "typeRoots": ["./src/types", "./node_modules/@types"],
+    
+    // Output settings
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
-
+    
     // Stricter Typechecking Options
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-
-    // Style Options
-    // "noImplicitReturns": true,
-    // "noImplicitOverride": true,
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
-    // "noFallthroughCasesInSwitch": true,
-    // "noPropertyAccessFromIndexSignature": true,
-
-    // Recommended Options
     "strict": true,
     "noImplicitAny": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    
+    // Other options
     "jsx": "react-jsx",
     "verbatimModuleSyntax": false,
     "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true,
+    "skipLibCheck": true
   },
   "include": ["src/**/*"],
-  "exclude": ["nod"]
+  "exclude": ["node_modules", "build", "dist"]
 }
