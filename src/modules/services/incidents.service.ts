@@ -96,8 +96,8 @@ export const createIncidentService = async (
     title: data.title,
     description: data.description,
     incident_type: data.incidentType,
-    latitude: data.latitude,
-    longitude: data.longitude,
+    latitude: data.latitude as unknown as number,
+    longitude: data.longitude as unknown as number,
     status: 'open' as Status,
     reporter_id: reporterId, // 🎯 REAL USER ID
     image_url: '',

@@ -17,8 +17,8 @@ export interface IncidentsTable {
   description: string;
   incident_type: Incident;
   status: Status;
-  latitude: string;
-  longitude: string;
+  latitude: number;
+  longitude: number;
   image_url: string;
   created_at: Timestamp;
 }

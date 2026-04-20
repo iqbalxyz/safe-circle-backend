@@ -71,10 +71,10 @@ export const IncidentsRepository = {
       const longMax = (long + radiusInDegrees).toString();
 
       query = query
-        .where('latitude', '>=', latMin)
-        .where('latitude', '<=', latMax)
-        .where('longitude', '>=', longMin)
-        .where('longitude', '<=', longMax);
+        .where('latitude', '>=', parseFloat(latMin))
+        .where('latitude', '<=', parseFloat(latMax))
+        .where('longitude', '>=', parseFloat(longMin))
+        .where('longitude', '<=', parseFloat(longMax));
     }
 
     if (params.limit) {
