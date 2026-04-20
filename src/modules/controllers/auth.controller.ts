@@ -95,15 +95,28 @@ export const refreshAccessTokenController = async (req: Request, res: Response) 
  * @returns A promise that resolves when the response is sent. The response includes a success message if the logout is successful, or an error message if there is an issue during logout.
  */
 export const logoutAuthController = async (req: Request, res: Response) => {
-  const refreshToken = req.cookies?.refreshToken;
+  // Try to get refreshToken from cookies first, then from request body
+  let refreshToken = req.cookies?.refreshToken;
+
+  if (!refreshToken && req.body?.refreshToken) {
+    refreshToken = req.body.refreshToken;
+    logger.info('Refresh token retrieved from request body');
+  }
 
   if (refreshToken) {
     const result = await logoutUserService(refreshToken);
     console.log('Database Deletion Result:', result);
+
+    if (Number(result.numDeletedRows) === 0) {
+      logger.warn('No refresh token found in database to revoke');
+    } else {
+      logger.info(`Successfully revoked ${result.numDeletedRows} token(s)`);
+    }
   } else {
-    logger.warn('Token not found in cookies during logout');
+    logger.warn('No refresh token provided in cookies or request body during logout');
   }
 
+  // Clear cookie if it exists (for web clients)
   res.clearCookie('refreshToken', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -113,6 +126,6 @@ export const logoutAuthController = async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: 'Successfully Logged out'
+    message: 'Successfully logged out'
   });
 };
