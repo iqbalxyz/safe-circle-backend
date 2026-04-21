@@ -5,7 +5,7 @@
 
 ## 📋 Overview
 
-A modern, production-ready RESTful API server built with Express.js. This boilerplate includes essential features like authentication, database integration, error handling, logging, and request validation.
+A modern, production-ready REST API server built with Express.js. This boilerplate includes essential features like authentication, database integration, error handling, logging, and request validation.
 
 ## 🚀 Features
 
