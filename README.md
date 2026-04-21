@@ -11,7 +11,7 @@ A modern, production-ready REST API server built with Express.js. This boilerpla
 
 - ✅ **REST API** - Clean and scalable API architecture
 - 🔐 **JWT Authentication** - Secure user authentication and authorization
-- 📦 **Database Integration** - MySQL MariaDB
+- 📦 **Database Integration** - MariaDB
 - 🛡️ **Input Validation** - Request validation using Zod
 - 📝 **Logging** - Winston logger for debugging and monitoring
 - 🔄 **Error Handling** - Centralized error handling middleware
@@ -22,7 +22,7 @@ A modern, production-ready REST API server built with Express.js. This boilerpla
 
 - Node.js (v18 or higher)
 - npm or yarn package manager
-- MySQL MariaDB
+- MariaDB
 - Git
 
 ## 🛠️ Installation
