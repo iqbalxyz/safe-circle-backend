@@ -7,7 +7,7 @@ export const CommentsRepository = {
     return await db
       .selectFrom('comments')
       .selectAll()
-      .where('incident_id', '=', incidentId)
+      .where('incidentId', '=', incidentId)
       .execute();
   },
 
@@ -38,7 +38,7 @@ export const CommentsRepository = {
   patchComment: async (id: number, data: CommentsUpdate): Promise<CommentsUpdate> => {
     const result = await db
       .updateTable('comments')
-      .set({ content: data.content, is_edited: data.is_edited })
+      .set({ content: data.content, isEdited: data.isEdited })
       .where('id', '=', id)
       .executeTakeFirst();
 

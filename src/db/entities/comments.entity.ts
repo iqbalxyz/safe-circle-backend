@@ -4,11 +4,11 @@ export type Timestamp = ColumnType<Date, Date | string>;
 
 export interface CommentsTable {
   id: Generated<number>;
-  incident_id: number;
-  user_id: number;
+  incidentId: number;
+  userId: number;
   content: string;
-  is_edited: boolean;
-  created_at: Timestamp;
+  isEdited: boolean;
+  createdAt: Timestamp;
 }
 
 export type Comments = Selectable<CommentsTable>;

@@ -1,7 +1,6 @@
 import { CommentsRepository } from '../../db/repos/comments.repository';
 import { Comments, CommentsInsert, CommentsUpdate } from '../../db/entities/comments.entity';
 import { PostCommentBodyRequest, UpdateCommentBodyRequest } from '../../schemas/comments.schema';
-import { format } from 'date-fns';
 
 export const getCommentsFromIncidentService = async (incidentId: number): Promise<Comments[]> => {
   return await CommentsRepository.getComments(incidentId);
@@ -13,11 +12,11 @@ export const addCommentToIncidentService = async (
   data: PostCommentBodyRequest
 ): Promise<CommentsInsert> => {
   const commentData = {
-    incident_id: incidentId,
-    user_id: userId,
+    incidentId: incidentId,
+    userId: userId,
     content: data.content,
-    is_edited: false,
-    created_at: format(new Date(), 'yyyy-MM-dd HH:mm:ss')
+    isEdited: false,
+    createdAt: new Date()
   };
 
   return await CommentsRepository.addComment(commentData);
@@ -33,7 +32,7 @@ export const patchCommentService = async (
 ): Promise<CommentsUpdate> => {
   const updatedComment = {
     content: data.content,
-    is_edited: true
+    isEdited: true
   };
   return await CommentsRepository.patchComment(commentId, updatedComment);
 };

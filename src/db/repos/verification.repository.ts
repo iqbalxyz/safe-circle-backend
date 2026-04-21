@@ -11,12 +11,12 @@ export const VerificationsRepository = {
     const result = await db
       .insertInto('verifications')
       .values({
-        incident_id: incidentId,
-        user_id: userId,
-        is_verified: isVerified
+        incidentId: incidentId,
+        userId: userId,
+        isVerified: isVerified
       })
       .onDuplicateKeyUpdate({
-        is_verified: isVerified
+        isVerified: isVerified
       })
       .execute();
 
@@ -25,9 +25,9 @@ export const VerificationsRepository = {
     }
 
     return {
-      incident_id: incidentId,
-      user_id: userId,
-      is_verified: isVerified
+      incidentId: incidentId,
+      userId: userId,
+      isVerified: isVerified
     };
   }
 };

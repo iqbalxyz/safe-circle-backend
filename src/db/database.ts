@@ -1,4 +1,4 @@
-import { Kysely, MysqlDialect } from 'kysely';
+import { Kysely, MysqlDialect, CamelCasePlugin } from 'kysely';
 import { createPool } from 'mysql2';
 import { UsersTable } from './entities/users.entity';
 import { IncidentsTable } from './entities/incidents.entity';
@@ -17,6 +17,7 @@ export interface Database {
 }
 
 export const db = new Kysely<Database>({
+  plugins: [new CamelCasePlugin()],
   dialect: new MysqlDialect({
     pool: createPool({
       host: neighborhoodWatch.host,

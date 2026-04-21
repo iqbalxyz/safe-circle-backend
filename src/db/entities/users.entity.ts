@@ -5,12 +5,12 @@ export type Timestamp = ColumnType<Date, Date | string>;
 
 export interface UsersTable {
   id: Generated<number>;
-  full_name: string;
+  fullName: string;
   email: string;
-  password_hash: string;
+  passwordHash: string;
   role: UserRole;
-  profile_img_url: string;
-  created_at: Timestamp;
+  profileImgUrl: string;
+  createdAt: Timestamp;
 }
 
 export type Users = Selectable<UsersTable>;

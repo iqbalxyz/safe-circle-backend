@@ -4,10 +4,10 @@ export type Timestamp = ColumnType<Date, Date | string>;
 
 export interface UserAuthTable {
   id: Generated<number>;
-  user_id: number;
-  refresh_token: string;
-  expires_at: Timestamp;
-  created_at: Timestamp;
+  userId: number;
+  refreshToken: string;
+  expiresAt: Timestamp;
+  createdAt: Timestamp;
 }
 
 export type UserAuth = Selectable<UserAuthTable>;

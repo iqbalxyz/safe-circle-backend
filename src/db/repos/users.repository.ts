@@ -12,7 +12,7 @@ export const UsersRepository = {
       query = query.where('id', '=', params.id);
     }
     if (params.fullName) {
-      query = query.where('full_name', 'like', `%${params.fullName}%`);
+      query = query.where('fullName', 'like', `%${params.fullName}%`);
     }
     if (params.email) {
       query = query.where('email', '=', params.email);

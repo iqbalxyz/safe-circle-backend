@@ -1,9 +1,9 @@
 import { Insertable, Selectable, Updateable } from 'kysely';
 
 export interface VerificationsTable {
-  incident_id: number;
-  user_id: number;
-  is_verified: boolean;
+  incidentId: number;
+  userId: number;
+  isVerified: boolean;
 }
 
 export type Verifications = Selectable<VerificationsTable>;

@@ -95,13 +95,13 @@ export const createIncidentService = async (
   const repositoryData = {
     title: data.title,
     description: data.description,
-    incident_type: data.incidentType,
+    incidentType: data.incidentType,
     latitude: data.latitude as unknown as number,
     longitude: data.longitude as unknown as number,
     status: 'open' as Status,
-    reporter_id: reporterId, // 🎯 REAL USER ID
-    image_url: '',
-    created_at: format(new Date(), 'yyyy-MM-dd HH:mm:ss')
+    reporterId: reporterId, // 🎯 REAL USER ID
+    imageUrl: '',
+    createdAt: new Date()
   };
 
   return await IncidentsRepository.addIncident(repositoryData);

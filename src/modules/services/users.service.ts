@@ -15,14 +15,14 @@ type GetUsersParams = {
  * Get Users Service
  * @param params - An object containing optional filters for retrieving users. The filters include:
  *   - id: Filter users by their unique identifier.
- *   - full_name: Filter users by their full name.
+ *   - fullName: Filter users by their full name.
  * @returns if successful, it will return an array of user objects that match the provided filters,
  * excluding the password hash for security reasons. If no filters are provided,
  * it will return all users in the system (excluding password hashes).
  */
 export const getUsersService = async (
   params: GetUsersParams
-): Promise<Omit<Users, 'password_hash'>[]> => {
+): Promise<Omit<Users, 'passwordHash'>[]> => {
   logger.info('getUsers: processing request', params);
 
   const filterParams: Partial<{ id: number; fullName: string; email?: string }> = {};
@@ -33,7 +33,7 @@ export const getUsersService = async (
   return result.map(sanitizeUser);
 };
 
-export const getSpecificUserService = async (id: number): Promise<Omit<Users, 'password_hash'>> => {
+export const getSpecificUserService = async (id: number): Promise<Omit<Users, 'passwordHash'>> => {
   logger.info('getSpecificUser: processing request', { userId: id });
   const result = await UsersRepository.getSpecificUser(id);
   if (result === undefined || result === null) {
@@ -55,7 +55,7 @@ export const getSpecificUserService = async (id: number): Promise<Omit<Users, 'p
 export const patchUserService = async (
   id: number,
   data: Partial<UpdateUserBodyRequest>
-): Promise<Omit<Users, 'password_hash'>> => {
+): Promise<Omit<Users, 'passwordHash'>> => {
   logger.info('patchUser: processing request', { userId: id, data });
 
   // Check if user exists
@@ -81,7 +81,7 @@ export const patchUserService = async (
   const updateData: UsersUpdate = {};
 
   if (validatedData.fullName !== undefined) {
-    updateData.full_name = validatedData.fullName;
+    updateData.fullName = validatedData.fullName;
   }
 
   if (validatedData.email !== undefined) {
@@ -89,7 +89,7 @@ export const patchUserService = async (
   }
 
   if (validatedData.password !== undefined) {
-    updateData.password_hash = await bcrypt.hash(validatedData.password, 10);
+    updateData.passwordHash = await bcrypt.hash(validatedData.password, 10);
   }
 
   // Only update if there's something to update

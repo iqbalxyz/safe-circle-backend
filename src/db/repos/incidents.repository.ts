@@ -30,7 +30,7 @@ export const IncidentsRepository = {
     }
 
     if (params.type) {
-      query = query.where('incident_type', '=', params.type);
+      query = query.where('incidentType', '=', params.type);
     }
 
     if (params.date) {
@@ -38,7 +38,7 @@ export const IncidentsRepository = {
       if (isNaN(date.getTime())) {
         throw HttpErrors.badRequest('Invalid date format');
       }
-      query = query.where('created_at', '>=', date);
+      query = query.where('createdAt', '>=', date);
     }
 
     if (params.lat && params.long) {

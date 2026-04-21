@@ -17,7 +17,7 @@ import bcrypt from 'bcrypt';
 
 export const registerUserService = async (
   data: CreateUserBodyRequest
-): Promise<Omit<Users, 'password_hash'>> => {
+): Promise<Omit<Users, 'passwordHash'>> => {
   logger.info('createUser: processing request', { email: data.email });
 
   const existingUser = await UsersRepository.getUsers({ email: data.email });
@@ -28,12 +28,12 @@ export const registerUserService = async (
   const passwordHash = await bcrypt.hash(data.password, 10);
 
   const dbData: UsersInsert = {
-    full_name: data.fullName,
+    fullName: data.fullName,
     email: data.email,
-    password_hash: passwordHash,
+    passwordHash: passwordHash,
     role: 'resident',
-    profile_img_url: '',
-    created_at: new Date()
+    profileImgUrl: '',
+    createdAt: new Date()
   };
 
   const result = await UserAuthRepository.createUser(dbData);
@@ -45,7 +45,7 @@ export const registerUserService = async (
 
 export const loginUserService = async (
   data: UserLoginRequest
-): Promise<{ user: Omit<Users, 'password_hash'>; accessToken: string; refreshToken: string }> => {
+): Promise<{ user: Omit<Users, 'passwordHash'>; accessToken: string; refreshToken: string }> => {
   logger.info('userLogin: processing login request', { email: data.email });
 
   const users = await UserAuthRepository.getUserByEmail({ email: data.email });
@@ -56,7 +56,7 @@ export const loginUserService = async (
 
   const user = users[0]!;
 
-  const isPasswordValid = await bcrypt.compare(data.password, user.password_hash);
+  const isPasswordValid = await bcrypt.compare(data.password, user.passwordHash);
 
   if (!isPasswordValid) {
     throw HttpErrors.unauthorized('Invalid password');
@@ -103,7 +103,7 @@ export const refreshAccessTokenService = async (
     throw HttpErrors.unauthorized('Invalid or revoked refresh token');
   }
 
-  if (new Date(session.expires_at) < new Date()) {
+  if (new Date(session.expiresAt) < new Date()) {
     await UserAuthRepository.deleteSession(session.id);
     throw HttpErrors.unauthorized('Refresh token expired');
   }

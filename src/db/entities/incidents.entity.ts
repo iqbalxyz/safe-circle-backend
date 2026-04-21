@@ -12,15 +12,15 @@ export type Timestamp = ColumnType<Date, Date | string>;
 
 export interface IncidentsTable {
   id: Generated<number>;
-  reporter_id: number;
+  reporterId: number;
   title: string;
   description: string;
-  incident_type: Incident;
+  incidentType: Incident;
   status: Status;
   latitude: number;
   longitude: number;
-  image_url: string;
-  created_at: Timestamp;
+  imageUrl: string;
+  createdAt: Timestamp;
 }
 
 export type Incidents = Selectable<IncidentsTable>;
