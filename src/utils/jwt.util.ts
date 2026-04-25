@@ -26,7 +26,7 @@ const generateRefreshToken = (payload: AccessTokenPayload) => {
     throw new Error('JWT_REFRESH_SECRET_KEY is missing');
   }
 
-  const expiresInSeconds = parseInt(process.env.JWT_REFRESH_EXPIRES_IN_SECONDS || '604800', 10);
+  const expiresInSeconds = parseInt(process.env.JWT_REFRESH_EXPIRES_IN_SECONDS || '86400', 10);
 
   const token = jsonwebtoken.sign(payload, secret, {
     expiresIn: expiresInSeconds
