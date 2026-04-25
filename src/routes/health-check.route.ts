@@ -13,7 +13,7 @@ healthCheckRouter.get('/', async (req, res) => {
       status: 'healthy',
       timestamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
       services: {
-        server: { status: 'up', uptime: process.uptime() },
+        server: { status: 'up', uptime: process.uptime() / 60 + ' minutes' },
         database: { status: 'up' }
       }
     });
@@ -22,7 +22,7 @@ healthCheckRouter.get('/', async (req, res) => {
       status: 'unhealthy',
       timestamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
       services: {
-        server: { status: 'up', uptime: process.uptime() },
+        server: { status: 'up', uptime: process.uptime() / 60 + ' minutes' },
         database: {
           status: 'down',
           error: error instanceof Error ? error.message : 'Database connection failed'
