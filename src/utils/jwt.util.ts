@@ -15,7 +15,7 @@ const generateAccessToken = (payload: AccessTokenPayload) => {
   }
 
   return jsonwebtoken.sign(payload, secret, {
-    expiresIn: parseInt(process.env.JWT_EXPIRES_IN || '3600', 10)
+    expiresIn: parseInt(process.env.JWT_EXPIRES_IN_SECONDS || '3600', 10)
   });
 };
 
@@ -26,7 +26,7 @@ const generateRefreshToken = (payload: AccessTokenPayload) => {
     throw new Error('JWT_REFRESH_SECRET_KEY is missing');
   }
 
-  const expiresInSeconds = parseInt(process.env.JWT_REFRESH_EXPIRES_IN || '604800', 10);
+  const expiresInSeconds = parseInt(process.env.JWT_REFRESH_EXPIRES_IN_SECONDS || '604800', 10);
 
   const token = jsonwebtoken.sign(payload, secret, {
     expiresIn: expiresInSeconds
@@ -70,7 +70,7 @@ const verifyAccessToken = (token: string): AccessTokenPayload | null => {
 };
 
 const getRefreshTokenConfig = () => {
-  const seconds = parseInt(process.env.JWT_REFRESH_EXPIRES_IN || '604800', 10);
+  const seconds = parseInt(process.env.JWT_REFRESH_EXPIRES_IN_SECONDS || '86400', 10);
   return {
     seconds,
     milliseconds: seconds * 1000
