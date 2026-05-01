@@ -12,14 +12,6 @@ app.use(appMiddleware);
 app.set('trust proxy', 1);
 app.use(limiter);
 
-// Debug routes (remove this in production)
-app.get('/debug-ip', (req, res) => {
-  res.json({
-    ip: req.ip,
-    headers: req.headers['x-forwarded-for']
-  });
-});
-
 app.listen(port, () => {
   console.log(`App listen on port ${port}`);
 });
