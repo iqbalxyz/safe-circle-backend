@@ -19,7 +19,7 @@ export const getIncidentsService = async (
     type: Incident;
     date: string;
     lat: string;
-    long: string;
+    lng: string;
     radius: number;
     radiusUnit: 'km' | 'miles' | 'degrees';
     limit: number;
@@ -53,19 +53,22 @@ export const getIncidentsService = async (
   }
 
   if (filterParams.date) {
-    repositoryParams.date = filterParams.date.toISOString();
+    const dateObj =
+      typeof filterParams.date === 'string' ? new Date(filterParams.date) : filterParams.date;
+    repositoryParams.date = dateObj.toISOString();
   }
 
   if (filterParams.lat !== undefined) {
     repositoryParams.lat = filterParams.lat.toString();
   }
 
-  if (filterParams.long !== undefined) {
-    repositoryParams.long = filterParams.long.toString();
+  if (filterParams.lng !== undefined) {
+    repositoryParams.lng = filterParams.lng.toString();
   }
 
   if (filterParams.radius !== undefined) {
     repositoryParams.radius = filterParams.radius;
+    repositoryParams.radiusUnit = 'km';
   }
 
   if (filterParams.limit !== undefined) {

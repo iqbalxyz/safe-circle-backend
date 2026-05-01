@@ -4,13 +4,9 @@ import { Status } from '../db/entities/incidents.entity';
 export const incidentQuerySchema = z.object({
   status: z.enum(['open', 'investigating', 'resolved', 'spam']).optional(),
   type: z.string().optional(),
-  date: z
-    .string()
-    .datetime()
-    .optional()
-    .transform((v) => (v ? new Date(v) : undefined)),
+  date: z.coerce.date().optional(),
   lat: z.coerce.number().optional(),
-  long: z.coerce.number().optional(),
+  lng: z.coerce.number().optional(),
   radius: z.coerce.number().optional(),
   radiusUnit: z.enum(['km', 'miles', 'degrees']).default('km'),
   limit: z.coerce.number().default(10)

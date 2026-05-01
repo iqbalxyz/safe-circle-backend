@@ -2,13 +2,7 @@ import { HttpErrors } from '../../utils/error.util';
 import { db } from '../database';
 import { Incident, Incidents, IncidentsInsert, Status } from '../entities/incidents.entity';
 
-const kmToDegrees = (km: number): number => {
-  return km / 111;
-};
-
-const milesToDegrees = (miles: number): number => {
-  return miles / 69;
-};
+const kmToDegrees = (km: number) => km / 111.32;
 
 export const IncidentsRepository = {
   getIncidents: async (
@@ -17,7 +11,7 @@ export const IncidentsRepository = {
       type: Incident;
       date: string;
       lat: string;
-      long: string;
+      lng: string;
       radius: number; // radius value
       radiusUnit: 'km' | 'miles' | 'degrees'; // unit of the radius
       limit: number;
@@ -41,15 +35,15 @@ export const IncidentsRepository = {
       query = query.where('createdAt', '>=', date);
     }
 
-    if (params.lat && params.long) {
+    if (params.lat && params.lng) {
       const lat = parseFloat(params.lat);
-      const long = parseFloat(params.long);
+      const long = parseFloat(params.lng);
 
       if (isNaN(lat) || isNaN(long)) {
         throw HttpErrors.badRequest('Invalid latitude or longitude');
       }
 
-      let radiusInDegrees = 0.1;
+      let radiusInDegrees = kmToDegrees(5);
 
       if (params.radius) {
         switch (params.radiusUnit) {
@@ -57,24 +51,21 @@ export const IncidentsRepository = {
             radiusInDegrees = kmToDegrees(params.radius);
             break;
           case 'miles':
-            radiusInDegrees = milesToDegrees(params.radius);
+            radiusInDegrees = params.radius / 69.17;
             break;
           case 'degrees':
-          default:
             radiusInDegrees = params.radius;
+            break;
+          default:
+            radiusInDegrees = kmToDegrees(params.radius);
         }
       }
 
-      const latMin = (lat - radiusInDegrees).toString();
-      const latMax = (lat + radiusInDegrees).toString();
-      const longMin = (long - radiusInDegrees).toString();
-      const longMax = (long + radiusInDegrees).toString();
-
       query = query
-        .where('latitude', '>=', parseFloat(latMin))
-        .where('latitude', '<=', parseFloat(latMax))
-        .where('longitude', '>=', parseFloat(longMin))
-        .where('longitude', '<=', parseFloat(longMax));
+        .where('latitude', '>=', lat - radiusInDegrees)
+        .where('latitude', '<=', lat + radiusInDegrees)
+        .where('longitude', '>=', long - radiusInDegrees)
+        .where('longitude', '<=', long + radiusInDegrees);
     }
 
     if (params.limit) {
