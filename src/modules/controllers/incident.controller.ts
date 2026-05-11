@@ -71,6 +71,10 @@ export const createIncidentController = async (
 
     const reporterId = req.user.id;
 
+    if (req.file) {
+      req.body.imageUrl = `/uploads/${req.file.filename}`;
+    }
+
     const result = await createIncidentService(req.body, reporterId);
 
     res.status(201).json({

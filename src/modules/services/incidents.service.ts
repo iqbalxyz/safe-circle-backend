@@ -102,7 +102,7 @@ export const createIncidentService = async (
     longitude: data.longitude as unknown as number,
     status: 'open' as Status,
     reporterId: reporterId, // 🎯 REAL USER ID
-    imageUrl: '',
+    imageUrl: data.imageUrl || '',
     createdAt: new Date()
   };
 

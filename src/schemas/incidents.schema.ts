@@ -23,7 +23,8 @@ export const postIncidentSchema = z.object({
     .enum(['theft', 'vandalism', 'pothole', 'utility_failure', 'suspicious_activity', 'other'])
     .default('other'),
   latitude: z.string(),
-  longitude: z.string()
+  longitude: z.string(),
+  imageUrl: z.string().optional()
 });
 
 export const updateIncidentStatusParamsSchema = z.object({

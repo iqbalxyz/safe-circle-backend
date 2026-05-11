@@ -92,6 +92,10 @@ export const patchUserService = async (
     updateData.passwordHash = await bcrypt.hash(validatedData.password, 10);
   }
 
+  if (validatedData.profileImage !== undefined) {
+    updateData.profileImgUrl = validatedData.profileImage;
+  }
+
   // Only update if there's something to update
   if (Object.keys(updateData).length === 0) {
     return sanitizeUser(existingUsers[0]!);

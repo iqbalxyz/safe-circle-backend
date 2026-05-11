@@ -81,6 +81,10 @@ export const patchUserController = async (
       });
     }
 
+    if (req.file) {
+      req.body.profileImage = `/uploads/${req.file.filename}`;
+    }
+
     const result = await patchUserService(userId, req.body);
 
     res.status(200).json({

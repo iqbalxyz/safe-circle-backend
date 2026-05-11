@@ -18,6 +18,7 @@ import {
 } from '../schemas/incidents.schema';
 import { verifyIncidentController } from '../modules/controllers/verification.controller';
 import { verifyIncidentBodySchema } from '../schemas/verifications.schema';
+import { upload } from '../middleware/multer.middleware';
 
 const incidentsRoute = Router();
 
@@ -37,6 +38,7 @@ incidentsRoute.get(
 
 incidentsRoute.post(
   '/',
+  upload.single('image'),
   validate(postIncidentSchema, 'body'),
   authenticate,
   createIncidentController

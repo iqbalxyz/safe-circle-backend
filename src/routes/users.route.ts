@@ -8,6 +8,7 @@ import {
 } from '../modules/controllers/users.controller';
 import { validate } from '../middleware/validate.middleware';
 import { authenticate } from '../middleware/auth.middleware';
+import { upload } from '../middleware/multer.middleware';
 
 const usersRoute = Router();
 
@@ -22,6 +23,7 @@ usersRoute.get(
 
 usersRoute.patch(
   '/:id',
+  upload.single('image'),
   validate(userIdParamSchema, 'params'),
   validate(updateUserSchema.partial(), 'body'),
   authenticate,
