@@ -130,7 +130,7 @@ export const refreshAccessTokenService = async (
 
   return {
     accessToken,
-    refreshToken
+    refreshToken: newRefreshToken
   };
 };
 

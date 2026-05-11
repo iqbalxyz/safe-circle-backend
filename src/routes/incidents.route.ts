@@ -38,9 +38,9 @@ incidentsRoute.get(
 
 incidentsRoute.post(
   '/',
+  authenticate,
   upload.single('image'),
   validate(postIncidentSchema, 'body'),
-  authenticate,
   createIncidentController
 );
 

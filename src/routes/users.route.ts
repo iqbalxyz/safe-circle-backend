@@ -23,10 +23,10 @@ usersRoute.get(
 
 usersRoute.patch(
   '/:id',
+  authenticate,
   upload.single('image'),
   validate(userIdParamSchema, 'params'),
   validate(updateUserSchema.partial(), 'body'),
-  authenticate,
   patchUserController
 );
 
