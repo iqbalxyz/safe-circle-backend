@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import '../utils/winston.util';
 import cors from 'cors';
 import app from '../routes/index.route';
@@ -18,6 +19,7 @@ appMiddleware.use(
 appMiddleware.options('*', cors());
 appMiddleware.use(express.json());
 appMiddleware.use(cookieParser());
+appMiddleware.use('/uploads', express.static(path.join(process.cwd(), 'public/uploads')));
 appMiddleware.use(app);
 
 export default appMiddleware;
