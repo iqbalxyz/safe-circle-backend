@@ -22,7 +22,11 @@ export const registerAuthController = async (req: Request, res: Response): Promi
     res.status(201).json({
       success: true,
       message: 'User created successfully',
-      data: result
+      data: {
+        user: result.user,
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken
+      }
     });
   } catch (error) {
     handleControllerError(res, error);

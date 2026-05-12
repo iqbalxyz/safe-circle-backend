@@ -17,7 +17,11 @@ import bcrypt from 'bcrypt';
 
 export const registerUserService = async (
   data: CreateUserBodyRequest
-): Promise<Omit<Users, 'passwordHash'>> => {
+): Promise<{
+  user: Omit<Users, 'passwordHash'>;
+  accessToken: string;
+  refreshToken: string;
+}> => {
   logger.info('createUser: processing request', { email: data.email });
 
   const existingUser = await UsersRepository.getUsers({ email: data.email });
@@ -39,8 +43,30 @@ export const registerUserService = async (
   };
 
   const result = await UserAuthRepository.createUser(dbData);
+  const user = sanitizeUser(result);
 
-  return sanitizeUser(result);
+  // 🔑 Generate tokens for the new user (same as login)
+  const payload = {
+    id: user.id,
+    role: user.role
+  };
+
+  const accessToken = generateAccessToken(payload);
+  const { token: refreshToken, expiresInSeconds } = generateRefreshToken(payload);
+
+  const expiresAt = new Date(Date.now() + expiresInSeconds * 1000);
+
+  await UserAuthRepository.createSession({
+    user_id: user.id,
+    refresh_token: refreshToken,
+    expires_at: expiresAt
+  });
+
+  return {
+    user,
+    accessToken,
+    refreshToken
+  };
 };
 
 // ================= LOGIN =================
