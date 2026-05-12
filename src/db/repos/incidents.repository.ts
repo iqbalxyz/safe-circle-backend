@@ -1,8 +1,18 @@
 import { HttpErrors } from '../../utils/error.util';
 import { db } from '../database';
 import { Incident, Incidents, IncidentsInsert, Status } from '../entities/incidents.entity';
+import { Comments } from '../entities/comments.entity';
 
 const kmToDegrees = (km: number) => km / 111.32;
+
+export type IncidentDetail = Incidents & {
+  commentCount: number;
+  reporterName: string | null;
+  reporterPic: string | null;
+  comments: (Pick<Comments, 'id' | 'content' | 'createdAt' | 'userId'> & {
+    userFullName: string | null;
+  })[];
+};
 
 export const IncidentsRepository = {
   getIncidents: async (
@@ -75,18 +85,71 @@ export const IncidentsRepository = {
     return await query.execute();
   },
 
-  getSpecificIncident: async (id: number): Promise<Incidents> => {
+  getSpecificIncident: async (id: number): Promise<IncidentDetail> => {
+    // Get incident details with reporter info
     const incident = await db
       .selectFrom('incidents')
-      .selectAll()
-      .where('id', '=', id)
+      .leftJoin('users', 'users.id', 'incidents.reporterId')
+      .select([
+        'incidents.id',
+        'incidents.reporterId',
+        'incidents.title',
+        'incidents.description',
+        'incidents.incidentType',
+        'incidents.latitude',
+        'incidents.longitude',
+        'incidents.imageUrl',
+        'incidents.createdAt',
+        'incidents.status',
+        'users.fullName as reporterName',
+        'users.profileImgUrl as reporterPic'
+      ])
+      .where('incidents.id', '=', id)
       .executeTakeFirst();
 
     if (!incident) {
       throw HttpErrors.notFound(`Incident with id ${id} not found`);
     }
 
-    return incident;
+    // Get all comments with commenter profile pics
+    const comments = await db
+      .selectFrom('comments')
+      .leftJoin('users', 'users.id', 'comments.userId')
+      .select([
+        'comments.id',
+        'comments.content',
+        'comments.createdAt',
+        'comments.userId',
+        'users.fullName as userFullName',
+        'users.profileImgUrl as userProfilePic'
+      ])
+      .where('comments.incidentId', '=', id)
+      .orderBy('comments.createdAt', 'desc')
+      .execute();
+
+    return {
+      id: incident.id,
+      reporterId: incident.reporterId,
+      title: incident.title,
+      description: incident.description,
+      incidentType: incident.incidentType,
+      latitude: incident.latitude,
+      longitude: incident.longitude,
+      imageUrl: incident.imageUrl,
+      createdAt: incident.createdAt,
+      status: incident.status,
+      reporterName: incident.reporterName,
+      reporterPic: incident.reporterPic || '',
+      commentCount: comments.length,
+      comments: comments.map((comment) => ({
+        id: comment.id,
+        content: comment.content,
+        createdAt: comment.createdAt,
+        userId: comment.userId,
+        userFullName: comment.userFullName || 'Anonymous',
+        userProfilePic: comment.userProfilePic || ''
+      }))
+    };
   },
 
   addIncident: async (data: IncidentsInsert): Promise<Incidents> => {

@@ -27,12 +27,14 @@ export const registerUserService = async (
 
   const passwordHash = await bcrypt.hash(data.password, 10);
 
+  const profileImgUrl = `https://ui-avatars.com/api/?name=${data.fullName.split(' ').join('+')}&background=random`;
+
   const dbData: UsersInsert = {
     fullName: data.fullName,
     email: data.email,
     passwordHash: passwordHash,
     role: 'resident',
-    profileImgUrl: '',
+    profileImgUrl: profileImgUrl,
     createdAt: new Date()
   };
 

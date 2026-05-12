@@ -9,7 +9,7 @@ export interface UsersTable {
   email: string;
   passwordHash: string;
   role: UserRole;
-  profileImgUrl: string;
+  profileImgUrl: string | null;
   createdAt: Timestamp;
 }
 
