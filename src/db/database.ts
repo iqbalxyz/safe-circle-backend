@@ -6,6 +6,7 @@ import { CommentsTable } from './entities/comments.entity';
 import { VerificationsTable } from './entities/verifications.entity';
 import neighborhoodWatch from '../config/neighborhood-watch';
 import { UserAuthTable } from './entities/user-auth.entity';
+import { UserOtpsTable } from './entities/otps.entity';
 
 export interface Database {
   // Table names must match exactly what's in the database
@@ -14,6 +15,7 @@ export interface Database {
   comments: CommentsTable;
   verifications: VerificationsTable;
   user_auth: UserAuthTable;
+  user_otps: UserOtpsTable;
 }
 
 export const db = new Kysely<Database>({
