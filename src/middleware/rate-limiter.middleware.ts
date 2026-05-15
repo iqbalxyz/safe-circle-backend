@@ -24,7 +24,7 @@ export const globalLimiter = rateLimit({
 
 export const emailVerificationLimiter = rateLimit({
   windowMs: 24 * 60 * 60 * 1000,
-  limit: 2,
+  limit: 3,
   store: new RedisStore({
     sendCommand: (...args: string[]) => redisClient.sendCommand(args),
     prefix: 'rl:email-verify:'
