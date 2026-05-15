@@ -3,6 +3,7 @@ import tseslint from 'typescript-eslint';
 import globals from 'globals';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import { defineConfig } from 'eslint/config';
+import eslintConfigPrettier from 'eslint-config-prettier'; // 1. Import this
 
 export default defineConfig([
   {
@@ -11,10 +12,8 @@ export default defineConfig([
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    // Ensure this matches your file extension
-    files: ['**/*.ts', '**/*.mts'],
+    files: ['**/*.ts', '**/*.mts', '**/*.tsx'],
     plugins: {
-      // This key MUST match the prefix used in the rules below
       'simple-import-sort': simpleImportSort
     },
     languageOptions: {
@@ -22,7 +21,8 @@ export default defineConfig([
       ecmaVersion: 'latest',
       sourceType: 'module',
       globals: {
-        ...globals.node
+        ...globals.node,
+        ...globals.es2021
       }
     },
     rules: {
@@ -30,12 +30,21 @@ export default defineConfig([
         'error',
         {
           groups: [
-            // This regex merges all imports into one single group
-            ['^\\u0000', '^@?\\w', '^']
+            [
+              // 1. Side effect imports (dotenv, bigint, etc.)
+              '^\\u0000',
+              // 2. Node.js built-ins (fs, path)
+              '^node:',
+              // 3. External packages (express)
+              '^@?\\w',
+              // 4. Anything else (internal files)
+              '^'
+            ]
           ]
         }
       ],
       'simple-import-sort/exports': 'error'
     }
-  }
+  },
+  eslintConfigPrettier // 2. Add this last to disable conflicting rules
 ]);
