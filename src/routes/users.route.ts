@@ -1,14 +1,14 @@
 import { Router } from 'express';
-import { updateUserSchema, userIdParamSchema, userSchema } from '../schemas/users.schema';
+import { authenticate } from '../middleware/auth.middleware';
+import { upload } from '../middleware/multer.middleware';
+import { validate } from '../middleware/validate.middleware';
 import {
   deleteUserController,
   getSpecificUserController,
   getUsersController,
   patchUserController
 } from '../modules/controllers/users.controller';
-import { validate } from '../middleware/validate.middleware';
-import { authenticate } from '../middleware/auth.middleware';
-import { upload } from '../middleware/multer.middleware';
+import { updateUserSchema, userIdParamSchema, userSchema } from '../schemas/users.schema';
 
 const usersRoute = Router();
 

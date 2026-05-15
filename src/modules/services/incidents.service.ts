@@ -1,6 +1,6 @@
-import { IncidentsRepository } from '../../db/repos/incidents.repository';
 import { Incidents } from '../../db/entities/incidents.entity';
-import { Status, Incident } from '../../db/entities/incidents.entity';
+import { Incident, Status } from '../../db/entities/incidents.entity';
+import { IncidentsRepository } from '../../db/repos/incidents.repository';
 import {
   IncidentListQueryParams,
   PostIncidentBodyRequest,

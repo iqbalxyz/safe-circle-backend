@@ -1,4 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
+import { PostCommentBodyRequest } from '../../schemas/comments.schema';
+import { HttpErrors } from '../../utils/error.util';
 import { handleControllerError } from '../../utils/error-handler.util';
 import {
   addCommentToIncidentService,
@@ -6,8 +8,6 @@ import {
   getCommentsFromIncidentService,
   patchCommentService
 } from '../services/comments.service';
-import { HttpErrors } from '../../utils/error.util';
-import { PostCommentBodyRequest } from '../../schemas/comments.schema';
 
 export const getCommentsFromIncidentController = async (
   req: Request<{ id: string }>,

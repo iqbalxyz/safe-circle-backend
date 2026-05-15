@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { HttpErrors } from '../../utils/error.util';
-import { verifyIncidentService } from '../services/verification.service';
-import { handleControllerError } from '../../utils/error-handler.util';
 import { VerifyIncidentBodyRequest } from '../../schemas/verifications.schema';
+import { HttpErrors } from '../../utils/error.util';
+import { handleControllerError } from '../../utils/error-handler.util';
+import { verifyIncidentService } from '../services/verification.service';
 
 export const verifyIncidentController = async (
   req: Request<{ id: string }, unknown, VerifyIncidentBodyRequest>,

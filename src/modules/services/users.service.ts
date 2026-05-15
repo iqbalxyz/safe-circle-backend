@@ -1,10 +1,10 @@
-import { UsersRepository } from '../../db/repos/users.repository';
+import bcrypt from 'bcrypt';
 import { Users, UsersUpdate } from '../../db/entities/users.entity';
+import { UsersRepository } from '../../db/repos/users.repository';
 import { UpdateUserBodyRequest, updateUserSchema } from '../../schemas/users.schema';
 import { HttpErrors } from '../../utils/error.util';
 import { sanitizeUser } from '../../utils/user-sanitizer.util';
 import { logger } from '../../utils/winston.util';
-import bcrypt from 'bcrypt';
 
 type GetUsersParams = {
   id?: number;

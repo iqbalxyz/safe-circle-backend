@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import { validate } from '../middleware/validate.middleware';
 import { authenticate } from '../middleware/auth.middleware';
+import { upload } from '../middleware/multer.middleware';
+import { validate } from '../middleware/validate.middleware';
 import {
   createIncidentController,
   deleteIncidentController,
@@ -8,6 +9,7 @@ import {
   getIncidentsController,
   updateIncidentStatusController
 } from '../modules/controllers/incident.controller';
+import { verifyIncidentController } from '../modules/controllers/verification.controller';
 import {
   incidentDetailParamsSchema,
   incidentQuerySchema,
@@ -16,9 +18,7 @@ import {
   updateIncidentStatusParamsSchema,
   updateIncidentStatusQuerySchema
 } from '../schemas/incidents.schema';
-import { verifyIncidentController } from '../modules/controllers/verification.controller';
 import { verifyIncidentBodySchema } from '../schemas/verifications.schema';
-import { upload } from '../middleware/multer.middleware';
 
 const incidentsRoute = Router();
 

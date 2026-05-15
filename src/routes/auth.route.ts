@@ -1,20 +1,54 @@
 import { Router } from 'express';
+import { authenticate } from '../middleware/auth.middleware';
+import { emailVerificationLimiter } from '../middleware/rate-limiter.middleware';
 import { validate } from '../middleware/validate.middleware';
-import { refreshValidationSchema, userLoginValidationSchema } from '../schemas/auth.schema';
-import { createUserSchema } from '../schemas/users.schema';
 import {
+  forgotPasswordController,
   loginAuthController,
   logoutAuthController,
   refreshAccessTokenController,
-  registerAuthController
+  registerAuthController,
+  resendOtpController,
+  resetPasswordController,
+  validateOtpController,
+  verifyOtpController
 } from '../modules/controllers/auth.controller';
-import { authenticate } from '../middleware/auth.middleware';
+import {
+  refreshValidationSchema,
+  resetPasswordValidationSchema,
+  userLoginValidationSchema,
+  verifyOtpValidationSchema
+} from '../schemas/auth.schema';
+import { createUserSchema } from '../schemas/users.schema';
 
 const authRoute = Router();
 
+// EMAIL VERIFICATION ROUTES
+authRoute.post(
+  '/register',
+  validate(createUserSchema),
+  emailVerificationLimiter,
+  registerAuthController
+);
+authRoute.post(
+  '/forgot-password',
+  validate(userLoginValidationSchema.pick({ email: true })),
+  emailVerificationLimiter,
+  forgotPasswordController
+);
+authRoute.post(
+  '/resend-otp',
+  validate(userLoginValidationSchema.pick({ email: true })),
+  emailVerificationLimiter,
+  resendOtpController
+);
+
+// AUTH ROUTES
 authRoute.post('/login', validate(userLoginValidationSchema), loginAuthController);
-authRoute.post('/register', validate(createUserSchema), registerAuthController);
 authRoute.post('/refresh', validate(refreshValidationSchema), refreshAccessTokenController);
 authRoute.post('/logout', authenticate, logoutAuthController);
+authRoute.post('/reset-password', validate(resetPasswordValidationSchema), resetPasswordController);
+authRoute.post('/verify-otp', validate(verifyOtpValidationSchema), verifyOtpController);
+authRoute.post('/validate-otp', validate(verifyOtpValidationSchema), validateOtpController);
 
 export default authRoute;

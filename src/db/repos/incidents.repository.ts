@@ -1,7 +1,7 @@
 import { HttpErrors } from '../../utils/error.util';
 import { db } from '../database';
-import { Incident, Incidents, IncidentsInsert, Status } from '../entities/incidents.entity';
 import { Comments } from '../entities/comments.entity';
+import { Incident, Incidents, IncidentsInsert, Status } from '../entities/incidents.entity';
 
 const kmToDegrees = (km: number) => km / 111.32;
 

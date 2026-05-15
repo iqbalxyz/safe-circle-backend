@@ -1,7 +1,7 @@
-import multer from 'multer';
 import { Request } from 'express';
-import path from 'path';
 import fs from 'fs';
+import multer from 'multer';
+import path from 'path';
 
 const uploadDir = path.join(process.cwd(), 'public/uploads');
 

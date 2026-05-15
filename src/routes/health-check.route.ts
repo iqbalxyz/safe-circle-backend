@@ -1,7 +1,7 @@
-import { Router } from 'express';
-import { db } from '../db/database';
-import { sql } from 'kysely';
 import { format } from 'date-fns';
+import { Router } from 'express';
+import { sql } from 'kysely';
+import { db } from '../db/database';
 
 const healthCheckRouter = Router();
 

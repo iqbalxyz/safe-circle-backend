@@ -1,31 +1,51 @@
 import { Request, Response } from 'express';
+import { UserAuthRepository } from '../../db/repos/auth.repository';
+import { OtpRepository } from '../../db/repos/otp.repository';
 import { handleControllerError } from '../../utils/error-handler.util';
+import { getRefreshTokenConfig } from '../../utils/jwt.util';
+import { sendOtpEmail } from '../../utils/mailer.util'; // Imported utility
+import { logger } from '../../utils/winston.util';
 import {
+  generateAndSaveOtpService,
   loginUserService,
   logoutUserService,
   refreshAccessTokenService,
-  registerUserService
+  registerUserService,
+  resetPasswordService,
+  validateOtpService,
+  verifyOtpService
 } from '../services/auth.service';
-import { getRefreshTokenConfig } from '../../utils/jwt.util';
-import { logger } from '../../utils/winston.util';
 
 /**
  * Controller to handle POST requests for creating a new user.
- * @params {Request} req - The Express request object, containing the user data in the request body.
- * @params {Response} res - The Express response object, used to send the response back to the client.
- * @returns {Promise<void>} - A promise that resolves when the response is sent. The response includes a success message and the created user data (excluding the password hash) if the user is created successfully, or an error message if there is an issue during user creation.
  **/
 export const registerAuthController = async (req: Request, res: Response): Promise<void> => {
   try {
     const result = await registerUserService(req.body);
 
+    // Send registration OTP email - Passing full registration data for deferred insertion
+    const { otpCode, expiryMinutes } = await generateAndSaveOtpService(
+      result.user.email,
+      req.body.fullName,
+      req.body.password
+    );
+    sendOtpEmail({
+      to: result.user.email,
+      otpCode,
+      expiresInMinutes: expiryMinutes,
+      purpose: 'registration'
+    }).catch((emailError) => {
+      logger.error(
+        `CRITICAL: Registration OTP delivery failed for ${result.user.email}:`,
+        emailError
+      );
+    });
+
     res.status(201).json({
       success: true,
-      message: 'User created successfully',
+      message: 'Registration initiated. Please verify your email with the OTP sent to your inbox.',
       data: {
-        user: result.user,
-        accessToken: result.accessToken,
-        refreshToken: result.refreshToken
+        user: result.user
       }
     });
   } catch (error) {
@@ -34,9 +54,47 @@ export const registerAuthController = async (req: Request, res: Response): Promi
 };
 
 /**
+ * Controller to handle POST requests for initiating a password reset.
+ */
+export const forgotPasswordController = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      res.status(400).json({ success: false, error: 'Email parameter is required' });
+      return;
+    }
+
+    // Make sure user with the given email exists in the database.
+    const users = await UserAuthRepository.getUserByEmail({ email: email });
+    if (users.length === 0) {
+      res.status(404).json({ success: false, error: 'No user found with this email address.' });
+      return;
+    }
+
+    // Generate OTP for password reset
+    const { otpCode, expiryMinutes } = await generateAndSaveOtpService(email);
+
+    // Send forgot password OTP email
+    sendOtpEmail({
+      to: email,
+      otpCode,
+      expiresInMinutes: expiryMinutes,
+      purpose: 'forgot-password'
+    }).catch((emailError) => {
+      logger.error(`CRITICAL: Forgot password OTP delivery failed for ${email}:`, emailError);
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Password reset code dispatched to your inbox.'
+    });
+  } catch (error) {
+    handleControllerError(res, error);
+  }
+};
+
+/**
  * Controller to handle POST requests for user login.
- * @param req - The Express request object, containing the user's login credentials (email and password) in the request body.
- * @param res - The Express response object, used to send the response back to the client. If the login is successful, the response includes a success message, the authenticated user information (excluding the password hash), and an access token. If there is an issue during login (e.g., invalid credentials), an error message is sent in the response.
  */
 export const loginAuthController = async (req: Request, res: Response) => {
   try {
@@ -63,8 +121,6 @@ export const loginAuthController = async (req: Request, res: Response) => {
 
 /**
  * Controller to handle POST requests for refreshing an access token.
- * @param req - The Express request object, containing the refresh token in the request body or cookies.
- * @param res - The Express response object, used to send the new access token back to the client. If there is an issue during refresh (e.g., invalid refresh token), an error message is sent in the response.
  */
 export const refreshAccessTokenController = async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
@@ -94,12 +150,8 @@ export const refreshAccessTokenController = async (req: Request, res: Response) 
 
 /**
  * Controller to handle POST requests for user logout.
- * @param req - The Express request object, containing the refresh token in the cookies. The controller will use this token to invalidate the user's session and log them out. If there is an issue during logout (e.g., invalid refresh token), an error message is sent in the response.
- * @param res - The Express response object, used to send a success message back to the client if the logout is successful, or an error message if there is an issue during logout.
- * @returns A promise that resolves when the response is sent. The response includes a success message if the logout is successful, or an error message if there is an issue during logout.
  */
 export const logoutAuthController = async (req: Request, res: Response) => {
-  // Try to get refreshToken from cookies first, then from request body
   let refreshToken = req.cookies?.refreshToken;
 
   if (!refreshToken && req.body?.refreshToken) {
@@ -108,19 +160,22 @@ export const logoutAuthController = async (req: Request, res: Response) => {
   }
 
   if (refreshToken) {
-    const result = await logoutUserService(refreshToken);
-    console.log('Database Deletion Result:', result);
+    try {
+      const result = await logoutUserService(refreshToken);
+      console.log('Database Deletion Result:', result);
 
-    if (Number(result.numDeletedRows) === 0) {
-      logger.warn('No refresh token found in database to revoke');
-    } else {
-      logger.info(`Successfully revoked ${result.numDeletedRows} token(s)`);
+      if (Number(result.numDeletedRows) === 0) {
+        logger.warn('No refresh token found in database to revoke');
+      } else {
+        logger.info(`Successfully revoked ${result.numDeletedRows} token(s)`);
+      }
+    } catch (error) {
+      return handleControllerError(res, error);
     }
   } else {
     logger.warn('No refresh token provided in cookies or request body during logout');
   }
 
-  // Clear cookie if it exists (for web clients)
   res.clearCookie('refreshToken', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -132,4 +187,153 @@ export const logoutAuthController = async (req: Request, res: Response) => {
     success: true,
     message: 'Successfully logged out'
   });
+};
+
+/**
+ * Controller to handle POST requests for resending an OTP.
+ */
+export const resendOtpController = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email } = req.body;
+
+    // 1. Check for pending registration (unused OTP with metadata)
+    const pendingOtp = await OtpRepository.findOtpByEmail(email);
+
+    // 2. Check for existing user (for forgot password)
+    const users = await UserAuthRepository.getUserByEmail({ email });
+    const userExists = users.length > 0;
+
+    if (!pendingOtp && !userExists) {
+      res.status(404).json({
+        success: false,
+        error: 'No pending registration or user found with this email address.'
+      });
+      return;
+    }
+
+    let purpose: 'registration' | 'forgot-password' | 'resend' = 'resend';
+    let fullName: string | undefined;
+    let passwordHash: string | undefined;
+
+    if (pendingOtp && pendingOtp.fullName) {
+      // It's a registration resend
+      purpose = 'registration';
+      fullName = pendingOtp.fullName;
+      passwordHash = pendingOtp.passwordHash;
+    } else if (userExists) {
+      // It's a forgot password resend
+      purpose = 'forgot-password';
+    }
+
+    // Generate new OTP (passing through registration metadata if found)
+    const { otpCode, expiryMinutes } = await generateAndSaveOtpService(
+      email,
+      fullName,
+      undefined,
+      passwordHash
+    );
+
+    // Resend OTP email with correct context
+    await sendOtpEmail({
+      to: email,
+      otpCode,
+      expiresInMinutes: expiryMinutes,
+      purpose
+    });
+
+    res.status(200).json({
+      success: true,
+      message: `Verification code resent successfully for ${purpose.replace('-', ' ')}.`
+    });
+  } catch (error) {
+    handleControllerError(res, error);
+  }
+};
+
+/**
+ * Controller to handle POST requests for verifying an OTP.
+ */
+export const verifyOtpController = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, otpCode } = req.body;
+    const result = await verifyOtpService(email, otpCode);
+
+    if (!result) {
+      res.status(401).json({ success: false, error: 'Invalid or expired OTP code' });
+      return;
+    }
+
+    const { user, accessToken, refreshToken } = result;
+    const { milliseconds } = getRefreshTokenConfig();
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: milliseconds,
+      path: '/'
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'OTP verified successfully. Your account is now active/authenticated.',
+      data: { user, accessToken, refreshToken }
+    });
+  } catch (error) {
+    handleControllerError(res, error);
+  }
+};
+
+/**
+ * Controller to handle POST requests for validating an OTP without consuming it.
+ */
+export const validateOtpController = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, otpCode } = req.body;
+    const isValid = await validateOtpService(email, otpCode);
+
+    if (!isValid) {
+      res.status(401).json({ success: false, error: 'Invalid or expired OTP code' });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'OTP is valid.'
+    });
+  } catch (error) {
+    handleControllerError(res, error);
+  }
+};
+
+/**
+ * Controller to handle POST requests for resetting a password.
+ */
+export const resetPasswordController = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, otpCode, newPassword } = req.body;
+    const { user, accessToken, refreshToken } = await resetPasswordService(
+      email,
+      otpCode,
+      newPassword
+    );
+
+    const { milliseconds } = getRefreshTokenConfig();
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: milliseconds,
+      path: '/'
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Password reset successful. You are now logged in.',
+      data: { user, accessToken, refreshToken }
+    });
+  } catch (error) {
+    handleControllerError(res, error);
+  }
 };

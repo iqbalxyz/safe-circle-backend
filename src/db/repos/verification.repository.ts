@@ -1,5 +1,5 @@
-import { db } from '../database';
 import { HttpErrors } from '../../utils/error.util';
+import { db } from '../database';
 import { VerificationsUpdate } from '../entities/verifications.entity';
 
 export const VerificationsRepository = {

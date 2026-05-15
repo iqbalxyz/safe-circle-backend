@@ -1,9 +1,9 @@
+import '../utils/winston.util';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import express from 'express';
 import path from 'path';
-import '../utils/winston.util';
-import cors from 'cors';
 import app from '../routes/index.route';
-import cookieParser from 'cookie-parser';
 
 const appMiddleware = express();
 

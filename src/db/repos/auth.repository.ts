@@ -68,5 +68,13 @@ export const UserAuthRepository = {
     // result.numDeletedRows will tell you if a row was actually removed
     logger.info('Rows deleted:', result.numDeletedRows);
     return result;
+  },
+
+  updateUserPassword: async (email: string, passwordHash: string): Promise<void> => {
+    await db
+      .updateTable('users')
+      .set({ passwordHash })
+      .where('email', '=', email)
+      .executeTakeFirstOrThrow();
   }
 };
