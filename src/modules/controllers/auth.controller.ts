@@ -13,6 +13,7 @@ import { getRefreshTokenConfig } from '../../utils/jwt.util';
 import { logger } from '../../utils/winston.util';
 import { sendOtpEmail } from '../../utils/mailer.util'; // Imported utility
 import { UserAuthRepository } from '../../db/repos/auth.repository';
+import { OtpRepository } from '../../db/repos/otp.repository';
 
 /**
  * Controller to handle POST requests for creating a new user.
@@ -194,24 +195,54 @@ export const resendOtpController = async (req: Request, res: Response): Promise<
   try {
     const { email } = req.body;
 
-    // Check if user with the given email exists
-    const users = await UserAuthRepository.getUserByEmail({ email: email });
-    if (users.length === 0) {
-      res.status(404).json({ success: false, error: 'No user found with this email address.' });
+    // 1. Check for pending registration (unused OTP with metadata)
+    const pendingOtp = await OtpRepository.findOtpByEmail(email);
+
+    // 2. Check for existing user (for forgot password)
+    const users = await UserAuthRepository.getUserByEmail({ email });
+    const userExists = users.length > 0;
+
+    if (!pendingOtp && !userExists) {
+      res.status(404).json({
+        success: false,
+        error: 'No pending registration or user found with this email address.'
+      });
       return;
     }
-    // Generate new OTP
-    const { otpCode, expiryMinutes } = await generateAndSaveOtpService(email);
-    // Resend OTP email
+
+    let purpose: 'registration' | 'forgot-password' | 'resend' = 'resend';
+    let fullName: string | undefined;
+    let passwordHash: string | undefined;
+
+    if (pendingOtp && pendingOtp.fullName) {
+      // It's a registration resend
+      purpose = 'registration';
+      fullName = pendingOtp.fullName;
+      passwordHash = pendingOtp.passwordHash;
+    } else if (userExists) {
+      // It's a forgot password resend
+      purpose = 'forgot-password';
+    }
+
+    // Generate new OTP (passing through registration metadata if found)
+    const { otpCode, expiryMinutes } = await generateAndSaveOtpService(
+      email,
+      fullName,
+      undefined,
+      passwordHash
+    );
+
+    // Resend OTP email with correct context
     await sendOtpEmail({
       to: email,
       otpCode,
       expiresInMinutes: expiryMinutes,
-      purpose: 'resend'
+      purpose
     });
+
     res.status(200).json({
       success: true,
-      message: 'OTP resent successfully.'
+      message: `Verification code resent successfully for ${purpose.replace('-', ' ')}.`
     });
   } catch (error) {
     handleControllerError(res, error);

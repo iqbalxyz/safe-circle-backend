@@ -1,16 +1,46 @@
 import rateLimit from 'express-rate-limit';
+import RedisStore from 'rate-limit-redis';
+import { createClient } from 'redis';
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: (req) => {
-    if (req.user?.role === 'admin') {
-      return 1000;
-    }
-    return 100;
-  }, // Limit each IP to 100 requests per window
-  message: 'Too many requests, please try again later.',
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false // Disable the `X-RateLimit-*` headers
+const redisClient = createClient({
+  url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
 
-export default limiter;
+redisClient
+  .connect()
+  .then(() => console.log('Redis is successfully connected for Rate Limiter'))
+  .catch((err) => console.error('Failed to connect to Redis:', err));
+
+export const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: (req) => {
+    if (req.user?.role === 'admin') return 1000;
+    return 100;
+  },
+  message: 'Too many requests, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+export const emailVerificationLimiter = rateLimit({
+  windowMs: 24 * 60 * 60 * 1000,
+  max: 2,
+  store: new RedisStore({
+    sendCommand: (...args) => redisClient.sendCommand(args),
+    prefix: 'rl:email-verify:'
+  }),
+
+  keyGenerator: (req) => {
+    if (!req.body.email) {
+      return req.ip;
+    }
+    return req.body.email;
+  },
+
+  message: {
+    status: 429,
+    message: 'You have reached the maximum number of requests per day. Please try again tomorrow.'
+  },
+  standardHeaders: true,
+  legacyHeaders: false
+});

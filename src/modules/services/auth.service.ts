@@ -144,21 +144,28 @@ export const logoutUserService = async (refreshToken: string) => {
   return await UserAuthRepository.revokeRefreshToken(refreshToken);
 };
 
-// ================= SEND EMAIL FOR REGISTRATION =================
+// ================= SEND EMAIL FOR REGISTRATION OR FORGOT PASSWORD =================
 
 export const generateAndSaveOtpService = async (
   email: string,
   fullName?: string,
-  password?: string
+  password?: string,
+  existingPasswordHash?: string
 ): Promise<{ otpCode: string; expiryMinutes: number }> => {
   const numericOtp = Math.floor(100000 + Math.random() * 900000);
   const otpCode = String(numericOtp);
   const expiryMinutes = 10;
   const expiresAt = new Date(Date.now() + expiryMinutes * 60000);
 
-  let passwordHash: string | undefined;
+  let passwordHash: string | undefined = existingPasswordHash;
   if (password) {
     passwordHash = await bcrypt.hash(password, 10);
+  }
+
+  // Check if OTP already exists for the email (for resending)
+  const existingOtp = await OtpRepository.findOtpByEmail(email);
+  if (existingOtp) {
+    await OtpRepository.markOtpAsUsed(existingOtp.id);
   }
 
   // Directly leverage the decoupled repository interface

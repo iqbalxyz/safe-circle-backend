@@ -33,6 +33,18 @@ export const OtpRepository = {
   },
 
   /**
+   * Look up an unexpired OTP by email for resending code
+   */
+  findOtpByEmail: async (email: string): Promise<UserOtp | undefined> => {
+    return await db
+      .selectFrom('user_otps')
+      .selectAll()
+      .where('email', '=', email)
+      .where('isUsed', '=', false)
+      .executeTakeFirst();
+  },
+
+  /**
    * Mark a used token as consumed to block replay attacks
    */
   markOtpAsUsed: async (id: number): Promise<void> => {

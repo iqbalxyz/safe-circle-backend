@@ -31,19 +31,19 @@ export const sendOtpEmail = async ({
   const subjectMap = {
     registration: `[${appName}] Verify your registration`,
     'forgot-password': `[${appName}] Reset your password`,
-    resend: `[${appName}] OTP Verification Code`
+    resend: `[${appName}] Verification Code`
   };
 
   const titleMap = {
     registration: 'Verify Your Registration',
     'forgot-password': 'Reset Your Password',
-    resend: 'OTP Verification Code'
+    resend: 'Verification Code'
   };
 
   const actionMap = {
     registration: 'complete your registration',
     'forgot-password': 'reset your password',
-    resend: 'verify the OTP '
+    resend: 'continue your action'
   };
 
   const htmlContent = `
