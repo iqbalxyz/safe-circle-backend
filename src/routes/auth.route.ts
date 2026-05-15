@@ -10,6 +10,7 @@ import {
   registerAuthController,
   resendOtpController,
   resetPasswordController,
+  validateOtpController,
   verifyOtpController
 } from '../modules/controllers/auth.controller';
 import {
@@ -48,5 +49,6 @@ authRoute.post('/refresh', validate(refreshValidationSchema), refreshAccessToken
 authRoute.post('/logout', authenticate, logoutAuthController);
 authRoute.post('/reset-password', validate(resetPasswordValidationSchema), resetPasswordController);
 authRoute.post('/verify-otp', validate(verifyOtpValidationSchema), verifyOtpController);
+authRoute.post('/validate-otp', validate(verifyOtpValidationSchema), validateOtpController);
 
 export default authRoute;

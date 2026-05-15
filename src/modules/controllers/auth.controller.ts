@@ -12,6 +12,7 @@ import {
   refreshAccessTokenService,
   registerUserService,
   resetPasswordService,
+  validateOtpService,
   verifyOtpService
 } from '../services/auth.service';
 
@@ -277,6 +278,28 @@ export const verifyOtpController = async (req: Request, res: Response): Promise<
       success: true,
       message: 'OTP verified successfully. Your account is now active/authenticated.',
       data: { user, accessToken, refreshToken }
+    });
+  } catch (error) {
+    handleControllerError(res, error);
+  }
+};
+
+/**
+ * Controller to handle POST requests for validating an OTP without consuming it.
+ */
+export const validateOtpController = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, otpCode } = req.body;
+    const isValid = await validateOtpService(email, otpCode);
+
+    if (!isValid) {
+      res.status(401).json({ success: false, error: 'Invalid or expired OTP code' });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'OTP is valid.'
     });
   } catch (error) {
     handleControllerError(res, error);

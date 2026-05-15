@@ -242,6 +242,13 @@ export const verifyOtpService = async (
   };
 };
 
+// ================= VALIDATE OTP (WITHOUT USING IT) =================
+
+export const validateOtpService = async (email: string, otpCode: string): Promise<boolean> => {
+  const activeOtp = await OtpRepository.findValidOtp(email, otpCode);
+  return !!activeOtp;
+};
+
 // ================= RESET PASSWORD =================
 
 export const resetPasswordService = async (
