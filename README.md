@@ -1,4 +1,4 @@
-# Neighborhood Watch Express API
+# SafeCircle Express API
 
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
 [![Express.js Version](https://img.shields.io/badge/express-%5E4.18.2-blue)](https://expressjs.com/)
@@ -30,8 +30,8 @@ A modern, production-ready REST API server built with Express.js. This boilerpla
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/iqbalxyz/neighborhood-watch-express.git
-cd neighborhood-watch-express
+git clone https://github.com/iqbalxyz/safe-circle-backend.git
+cd safe-circle-backend
 ```
 
 ### 2. Install dependencies
