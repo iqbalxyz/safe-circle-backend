@@ -1,18 +1,18 @@
-import { UserAuthRepository } from '../../db/repos/auth.repository';
-import { UsersRepository } from '../../db/repos/users.repository';
+import bcrypt from 'bcrypt';
 import { Users, UsersInsert } from '../../db/entities/users.entity';
+import { UserAuthRepository } from '../../db/repos/auth.repository';
+import { OtpRepository } from '../../db/repos/otp.repository';
+import { UsersRepository } from '../../db/repos/users.repository';
 import { UserLoginRequest } from '../../schemas/auth.schema';
 import { CreateUserBodyRequest } from '../../schemas/users.schema';
 import { HttpErrors } from '../../utils/error.util';
-import { sanitizeUser } from '../../utils/user-sanitizer.util';
-import { logger } from '../../utils/winston.util';
 import {
   generateAccessToken,
   generateRefreshToken,
   verifyRefreshToken
 } from '../../utils/jwt.util';
-import bcrypt from 'bcrypt';
-import { OtpRepository } from '../../db/repos/otp.repository';
+import { sanitizeUser } from '../../utils/user-sanitizer.util';
+import { logger } from '../../utils/winston.util';
 
 // ================= REGISTER =================
 

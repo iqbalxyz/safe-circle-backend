@@ -24,18 +24,17 @@ export const globalLimiter = rateLimit({
 
 export const emailVerificationLimiter = rateLimit({
   windowMs: 24 * 60 * 60 * 1000,
-  max: 2,
+  limit: 2,
   store: new RedisStore({
-    sendCommand: (...args) => redisClient.sendCommand(args),
+    sendCommand: (...args: string[]) => redisClient.sendCommand(args),
     prefix: 'rl:email-verify:'
   }),
 
   keyGenerator: (req) => {
-    if (!req.body.email) {
-      return req.ip;
-    }
-    return req.body.email;
+    return req.body.email || req.ip;
   },
+
+  validate: { keyGeneratorIpFallback: false },
 
   message: {
     status: 429,

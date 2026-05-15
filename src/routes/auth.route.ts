@@ -1,24 +1,24 @@
 import { Router } from 'express';
+import { authenticate } from '../middleware/auth.middleware';
+import { emailVerificationLimiter } from '../middleware/rate-limiter.middleware';
 import { validate } from '../middleware/validate.middleware';
 import {
-  refreshValidationSchema,
-  userLoginValidationSchema,
-  verifyOtpValidationSchema,
-  resetPasswordValidationSchema
-} from '../schemas/auth.schema';
-import { createUserSchema } from '../schemas/users.schema';
-import {
+  forgotPasswordController,
   loginAuthController,
   logoutAuthController,
   refreshAccessTokenController,
   registerAuthController,
-  forgotPasswordController,
-  verifyOtpController,
   resendOtpController,
-  resetPasswordController
+  resetPasswordController,
+  verifyOtpController
 } from '../modules/controllers/auth.controller';
-import { authenticate } from '../middleware/auth.middleware';
-import { emailVerificationLimiter } from '../middleware/rate-limiter.middleware';
+import {
+  refreshValidationSchema,
+  resetPasswordValidationSchema,
+  userLoginValidationSchema,
+  verifyOtpValidationSchema
+} from '../schemas/auth.schema';
+import { createUserSchema } from '../schemas/users.schema';
 
 const authRoute = Router();
 

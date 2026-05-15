@@ -1,12 +1,12 @@
-import { Kysely, MysqlDialect, CamelCasePlugin } from 'kysely';
+import { CamelCasePlugin, Kysely, MysqlDialect } from 'kysely';
 import { createPool } from 'mysql2';
-import { UsersTable } from './entities/users.entity';
-import { IncidentsTable } from './entities/incidents.entity';
-import { CommentsTable } from './entities/comments.entity';
-import { VerificationsTable } from './entities/verifications.entity';
 import neighborhoodWatch from '../config/neighborhood-watch';
-import { UserAuthTable } from './entities/user-auth.entity';
+import { CommentsTable } from './entities/comments.entity';
+import { IncidentsTable } from './entities/incidents.entity';
 import { UserOtpsTable } from './entities/otps.entity';
+import { UserAuthTable } from './entities/user-auth.entity';
+import { UsersTable } from './entities/users.entity';
+import { VerificationsTable } from './entities/verifications.entity';
 
 export interface Database {
   // Table names must match exactly what's in the database

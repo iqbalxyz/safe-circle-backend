@@ -1,5 +1,5 @@
-import { CommentsRepository } from '../../db/repos/comments.repository';
 import { Comments, CommentsInsert, CommentsUpdate } from '../../db/entities/comments.entity';
+import { CommentsRepository } from '../../db/repos/comments.repository';
 import { PostCommentBodyRequest, UpdateCommentBodyRequest } from '../../schemas/comments.schema';
 
 export const getCommentsFromIncidentService = async (incidentId: number): Promise<Comments[]> => {

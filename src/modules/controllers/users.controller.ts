@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
-import {
-  getUsersService,
-  patchUserService,
-  deleteUserService,
-  getSpecificUserService
-} from '../services/users.service';
 import { UpdateUserBodyRequest } from '../../schemas/users.schema';
 import { handleControllerError } from '../../utils/error-handler.util';
+import {
+  deleteUserService,
+  getSpecificUserService,
+  getUsersService,
+  patchUserService
+} from '../services/users.service';
 
 type PatchUserRequest = Request<{ id: string }, Record<string, unknown>, UpdateUserBodyRequest>;
 

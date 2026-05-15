@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { verifyAccessToken } from '../utils/jwt.util';
 
 export const authenticate = (req: Request, res: Response, next: NextFunction): void => {

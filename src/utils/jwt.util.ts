@@ -80,8 +80,8 @@ const getRefreshTokenConfig = () => {
 export {
   generateAccessToken,
   generateRefreshToken,
-  verifyRefreshToken,
+  getRefreshTokenConfig,
   parseJwt,
   verifyAccessToken,
-  getRefreshTokenConfig
+  verifyRefreshToken
 };

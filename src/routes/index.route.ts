@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import healthCheckRoute from './health-check.route';
-import usersRoute from './users.route';
 import authRoute from './auth.route';
-import incidentsRoute from './incidents.route';
 import incidentCommentsRoute from './comments.route';
+import healthCheckRoute from './health-check.route';
+import incidentsRoute from './incidents.route';
+import usersRoute from './users.route';
 
 const app = Router();
 

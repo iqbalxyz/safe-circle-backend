@@ -1,8 +1,8 @@
+import './utils/bigint.util';
 import 'dotenv/config';
 import express, { type Application } from 'express';
 import appMiddleware from './middleware/cors.middleware';
 import { globalLimiter } from './middleware/rate-limiter.middleware';
-import './utils/bigint.util';
 
 const app: Application = express();
 const port: number = process.env.PORT != null ? parseInt(process.env.PORT) : 4000;

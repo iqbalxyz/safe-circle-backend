@@ -1,19 +1,19 @@
 import { Request, Response } from 'express';
+import { UserAuthRepository } from '../../db/repos/auth.repository';
+import { OtpRepository } from '../../db/repos/otp.repository';
 import { handleControllerError } from '../../utils/error-handler.util';
+import { getRefreshTokenConfig } from '../../utils/jwt.util';
+import { sendOtpEmail } from '../../utils/mailer.util'; // Imported utility
+import { logger } from '../../utils/winston.util';
 import {
+  generateAndSaveOtpService,
   loginUserService,
   logoutUserService,
   refreshAccessTokenService,
   registerUserService,
-  generateAndSaveOtpService,
-  verifyOtpService,
-  resetPasswordService
+  resetPasswordService,
+  verifyOtpService
 } from '../services/auth.service';
-import { getRefreshTokenConfig } from '../../utils/jwt.util';
-import { logger } from '../../utils/winston.util';
-import { sendOtpEmail } from '../../utils/mailer.util'; // Imported utility
-import { UserAuthRepository } from '../../db/repos/auth.repository';
-import { OtpRepository } from '../../db/repos/otp.repository';
 
 /**
  * Controller to handle POST requests for creating a new user.

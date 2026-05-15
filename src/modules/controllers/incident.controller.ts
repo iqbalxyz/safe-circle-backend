@@ -1,4 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
+import {
+  incidentQuerySchema,
+  PostIncidentBodyRequest,
+  UpdateIncidentStatusBodyRequest
+} from '../../schemas/incidents.schema';
+import { HttpErrors } from '../../utils/error.util';
 import { handleControllerError } from '../../utils/error-handler.util';
 import {
   createIncidentService,
@@ -7,12 +13,6 @@ import {
   getIncidentsService,
   updateIncidentStatusService
 } from '../services/incidents.service';
-import {
-  incidentQuerySchema,
-  PostIncidentBodyRequest,
-  UpdateIncidentStatusBodyRequest
-} from '../../schemas/incidents.schema';
-import { HttpErrors } from '../../utils/error.util';
 
 export const getIncidentsController = async (req: Request, res: Response, next: NextFunction) => {
   try {

@@ -1,5 +1,5 @@
-import { VerificationsRepository } from '../../db/repos/verification.repository';
 import { VerificationsUpdate } from '../../db/entities/verifications.entity';
+import { VerificationsRepository } from '../../db/repos/verification.repository';
 import { VerifyIncidentBodyRequest } from '../../schemas/verifications.schema';
 
 export const verifyIncidentService = async (
