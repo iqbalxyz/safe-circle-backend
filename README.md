@@ -81,7 +81,7 @@ yarn start
 ```
 
 # 🔌 API Endpoints
-[Visit Documentation](https://www.notion.so/Neighborhood-Watch-API-Documentation-30e73d2c6b6a800c81f3ef3febe7ffe0)
+[Visit Documentation](https://fixed-bit-d33.notion.site/Neighborhood-Watch-API-Documentation-30e73d2c6b6a800c81f3ef3febe7ffe0)
 
 # 👥 Authors
 Moch. Iqbal S - [iqbalxyz](https://github.com/iqbalxyz)
